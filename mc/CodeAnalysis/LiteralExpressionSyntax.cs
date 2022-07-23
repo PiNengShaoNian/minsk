@@ -9,7 +9,7 @@
 
         public SyntaxToken NumberToken { get; }
 
-        public override SyntaxKind Kind => SyntaxKind.NumberExpression;
+        public override SyntaxKind Kind => SyntaxKind.LiteralExpression;
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
