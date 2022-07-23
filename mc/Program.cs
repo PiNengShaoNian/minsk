@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Minsk.CodeAnalysis;
+using Minsk.CodeAnalysis.Syntax;
 
 namespace Minsk
 {
