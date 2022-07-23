@@ -1,10 +1,10 @@
 ﻿namespace Minsk.CodeAnalysis
 {
-    sealed class NumberExpressionSyntax : ExpressionSyntax
+    public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
-        public NumberExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken literalToken)
         {
-            NumberToken = numberToken;
+            NumberToken = literalToken;
         }
 
         public SyntaxToken NumberToken { get; }

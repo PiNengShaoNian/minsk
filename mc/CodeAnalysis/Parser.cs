@@ -1,6 +1,6 @@
 ﻿namespace Minsk.CodeAnalysis
 {
-    class Parser
+    sealed internal class Parser
     {
         private readonly SyntaxToken[] _tokens;
         private int _position;
@@ -65,7 +65,7 @@
         public SyntaxTree Parse()
         {
 
-            var expression = ParseTerm();
+            var expression = ParseExpression();
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
             return new SyntaxTree(_diagnostics, expression, endOfFileToken);
         }
@@ -113,7 +113,7 @@
                 return new ParenthesisExpressionSyntax(left, expression, right);
             }
             var numberToken = Match(SyntaxKind.NumberToken);
-            return new NumberExpressionSyntax(numberToken);
+            return new LiteralExpressionSyntax(numberToken);
         }
     }
 }
