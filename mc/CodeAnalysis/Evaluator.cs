@@ -27,7 +27,7 @@ namespace Minsk.CodeAnalysis
             if (node is BoundUnaryExpression u)
             {
                 var operand = EvaluateExpression(u.Operand);
-                switch (u.OperatorKind)
+                switch (u.Op.Kind)
                 {
                     case BoundUnaryOperatorKind.Negation:
                         return -(int)operand;
@@ -36,7 +36,7 @@ namespace Minsk.CodeAnalysis
                     case BoundUnaryOperatorKind.LogicalNegation:
                         return !(bool)operand;
                     default:
-                        throw new Exception($"Unpexted unary operator ${u.OperatorKind}");
+                        throw new Exception($"Unpexted unary operator ${u.Op.Kind}");
                 }
             }
 
@@ -45,7 +45,7 @@ namespace Minsk.CodeAnalysis
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
 
-                switch (b.OperatorKind)
+                switch (b.Op.Kind)
                 {
                     case BoundBinaryOperatorKind.Addition:
                         return (int)left + (int)right;
@@ -60,7 +60,7 @@ namespace Minsk.CodeAnalysis
                     case BoundBinaryOperatorKind.LogicalOr:
                         return (bool)left || (bool)right;
                     default:
-                        throw new Exception($"Unpexted binary operator ${b.OperatorKind}");
+                        throw new Exception($"Unpexted binary operator ${b.Op.Kind}");
                 }
             }
 
