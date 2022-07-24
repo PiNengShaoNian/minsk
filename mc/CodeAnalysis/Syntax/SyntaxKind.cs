@@ -13,7 +13,11 @@
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
-        
+        IdentifierToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
+
         //Keyword
         TrueKeyword,
         FalseKeyword,
@@ -23,6 +27,6 @@
         BinaryExpression,
         ParenthesisExpression,
         UnaryExpression,
-        IdentifierToken,
+
     }
 }

@@ -13,18 +13,21 @@
 
         public IEnumerable<string> Diagnostics => _diagnostics;
 
-        private char Current
+        private char Current => Peek(0);
+
+        private char Lookahead => Peek(1);
+
+        private char Peek(int offset)
         {
-            get
+            int index = _position + offset;
+
+            if (index >= _text.Length)
             {
-                if (_position >= _text.Length)
-                {
-                    return '\0';
-                }
-                else
-                {
-                    return _text[_position];
-                }
+                return '\0';
+            }
+            else
+            {
+                return _text[index];
             }
         }
 
@@ -105,6 +108,24 @@
                     return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", null);
                 case ')':
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
+                case '!':
+                    return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
+                case '&':
+                    if (Lookahead == '&')
+                    {
+                        var token = new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, _position, "&&", null);
+                        _position += 2;
+                        return token;
+                    }
+                    break;
+                case '|':
+                    if (Lookahead == '|')
+                    {
+                        var token = new SyntaxToken(SyntaxKind.PipePipeToken, _position, "||", null);
+                        _position += 2;
+                        return token;
+                    }
+                    break;
             }
 
             _diagnostics.Add($"ERROR: bad character input: '{Current}'");
