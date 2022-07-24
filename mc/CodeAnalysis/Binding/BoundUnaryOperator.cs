@@ -14,7 +14,7 @@ namespace Minsk.CodeAnalysis.Binding
             SyntaxKind = syntaxKind;
             Kind = kind;
             OperandType = operandType;
-            ResultType = resultType;
+            Type = resultType;
         }
 
         private static BoundUnaryOperator[] _operators =
@@ -40,7 +40,7 @@ namespace Minsk.CodeAnalysis.Binding
         public SyntaxKind SyntaxKind { get; }
         public BoundUnaryOperatorKind Kind { get; }
         public Type OperandType { get; }
-        public Type ResultType { get; }
+        public Type Type { get; }
     }
 
 }

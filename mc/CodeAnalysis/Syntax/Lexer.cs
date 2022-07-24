@@ -38,10 +38,6 @@
 
         public SyntaxToken Lex()
         {
-            // <numbers>
-            // + - * / ( )
-            // <whitespace>
-
             if (_position >= _text.Length)
             {
                 return new SyntaxToken(SyntaxKind.EndOfFileToken, _position, "\n", null);
@@ -109,6 +105,12 @@
                 case ')':
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
                 case '!':
+                    if (Lookahead == '=')
+                    {
+                        var token = new SyntaxToken(SyntaxKind.BangEqualsToken, _position, "!=", null);
+                        _position += 2;
+                        return token;
+                    }
                     return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
                 case '&':
                     if (Lookahead == '&')
@@ -122,6 +124,14 @@
                     if (Lookahead == '|')
                     {
                         var token = new SyntaxToken(SyntaxKind.PipePipeToken, _position, "||", null);
+                        _position += 2;
+                        return token;
+                    }
+                    break;
+                case '=':
+                    if (Lookahead == '=')
+                    {
+                        var token = new SyntaxToken(SyntaxKind.EqualsEqualsToken, _position, "==", null);
                         _position += 2;
                         return token;
                     }
