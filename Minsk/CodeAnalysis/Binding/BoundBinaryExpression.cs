@@ -12,7 +12,7 @@
 
         public override Type Type => Op.Type;
 
-        public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
+        public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
 
         public BoundExpression Right { get; }
         public BoundExpression Left { get; }

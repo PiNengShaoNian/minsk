@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mc", "mc\mc.csproj", "{EAA44A90-3569-4C27-AC0C-D8EE558413F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mc", "mc\mc.csproj", "{EAA44A90-3569-4C27-AC0C-D8EE558413F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minsk", "Minsk\Minsk.csproj", "{4E4D1F55-E739-44A9-A619-728912CA8B20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D5CCFA60-661D-4C08-A910-1FCF8837D543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5CCFA60-661D-4C08-A910-1FCF8837D543}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5CCFA60-661D-4C08-A910-1FCF8837D543}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5CCFA60-661D-4C08-A910-1FCF8837D543}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAA44A90-3569-4C27-AC0C-D8EE558413F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAA44A90-3569-4C27-AC0C-D8EE558413F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAA44A90-3569-4C27-AC0C-D8EE558413F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAA44A90-3569-4C27-AC0C-D8EE558413F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E4D1F55-E739-44A9-A619-728912CA8B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E4D1F55-E739-44A9-A619-728912CA8B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E4D1F55-E739-44A9-A619-728912CA8B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E4D1F55-E739-44A9-A619-728912CA8B20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

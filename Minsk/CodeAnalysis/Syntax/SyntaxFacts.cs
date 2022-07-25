@@ -15,7 +15,7 @@
                     return 3;
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
-                    return 5;
+                    return 4;
                 case SyntaxKind.StarToken:
                 case SyntaxKind.SlashToken:
                     return 5;

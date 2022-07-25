@@ -6,7 +6,7 @@ namespace Minsk.CodeAnalysis.Syntax
     {
         private readonly SyntaxToken[] _tokens;
         private int _position;
-        private List<string> _diagnostics = new List<string>();
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
         public Parser(string text)
         {
             var tokens = new List<SyntaxToken>();
@@ -26,7 +26,7 @@ namespace Minsk.CodeAnalysis.Syntax
             _diagnostics.AddRange(lexer.Diagnostics);
         }
 
-        public IEnumerable<string> Diagnostics => _diagnostics;
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         private SyntaxToken Peek(int offset)
         {
@@ -54,16 +54,11 @@ namespace Minsk.CodeAnalysis.Syntax
                 return NextToken();
             }
 
-            _diagnostics.Add($"ERROR: Unexpecteed token <{Current.Kind}>, expected <{kind}>");
+            _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
 
             return new SyntaxToken(kind, Current.Position, Current.Text, null);
         }
 
-        //Program    -> Expression EOF
-        //Expression -> Term
-        //Term       -> Factor + Factor | Factor - Factor
-        //Factor     -> Primary * Primary | Primary / Primary
-        //Primary    -> Number | ( Expression )
         public SyntaxTree Parse()
         {
 

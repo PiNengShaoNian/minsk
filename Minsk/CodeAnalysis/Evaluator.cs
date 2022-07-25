@@ -1,9 +1,7 @@
-using Minsk.CodeAnalysis.Syntax;
 using Minsk.CodeAnalysis.Binding;
 
 namespace Minsk.CodeAnalysis
 {
-
     internal sealed class Evaluator
     {
         private readonly BoundExpression _root;
