@@ -19,10 +19,29 @@ namespace Minsk.CodeAnalysis.Binding
                 case SyntaxKind.BinaryExpression:
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
                 case SyntaxKind.ParenthesisExpression:
-                    return BindExpression(((ParenthesisExpressionSyntax)syntax).Expression);
+                    return BindParenthesisExpression(((ParenthesisExpressionSyntax)syntax));
+                case SyntaxKind.NameExpression:
+                    return BindNameExpression((NameExpressionSyntax)syntax);
+                case SyntaxKind.AssignmentExpression:
+                    return BindAssignmentExpression((AssignmentExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundExpression BindParenthesisExpression(ParenthesisExpressionSyntax syntax)
+        {
+            return BindExpression(syntax.Expression);
+        }
+
+        private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
+        {
+            throw new NotImplementedException();
+        }
+
+        private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
+        {
+            throw new NotImplementedException();
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)

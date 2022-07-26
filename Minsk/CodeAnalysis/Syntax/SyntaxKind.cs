@@ -19,6 +19,7 @@
         PipePipeToken,
         EqualsEqualsToken,
         BangEqualsToken,
+        EqualsToken,
 
         //Keyword
         TrueKeyword,
@@ -29,6 +30,7 @@
         BinaryExpression,
         ParenthesisExpression,
         UnaryExpression,
-
+        AssignmentExpression,
+        NameExpression,
     }
 }

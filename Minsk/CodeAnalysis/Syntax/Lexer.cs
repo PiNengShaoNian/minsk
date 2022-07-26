@@ -135,6 +135,10 @@
                         _position += 2;
                         return token;
                     }
+                    else
+                    {
+                        return new SyntaxToken(SyntaxKind.EqualsToken, _position++, "=", null);
+                    }
                     break;
             }
 
