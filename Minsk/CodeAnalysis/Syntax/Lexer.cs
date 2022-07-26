@@ -139,7 +139,6 @@
                     {
                         return new SyntaxToken(SyntaxKind.EqualsToken, _position++, "=", null);
                     }
-                    break;
             }
 
 

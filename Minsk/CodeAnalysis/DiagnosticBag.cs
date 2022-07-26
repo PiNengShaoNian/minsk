@@ -59,5 +59,11 @@ namespace Minsk.CodeAnalysis
             var message = $"Unary operator '{opText}' is not defined for type {operandType}.";
             Report(span, message);
         }
+
+        public void ReportUndefinedName(TextSpan span, string name)
+        {
+            var message = $"Variable '{name}' dosn't exist.";
+            Report(span, message);
+        }
     }
 }

@@ -125,7 +125,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.OpenParenthesisToken:
                     {
                         var left = NextToken();
-                        var expression = ParseBinaryExpression();
+                        var expression = ParseExpression();
                         var right = Match(SyntaxKind.CloseParenthesisToken);
                         return new ParenthesisExpressionSyntax(left, expression, right);
                     }
