@@ -20,9 +20,9 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             {
                 using (var e = new AssertingEnumerator(expression))
                 {
-                    //        op2
+                    //        binary
                     //      /    \
-                    //    op1     c
+                    //    unary     c
                     //    /  \
                     //   a     b
                     e.AssertNode(SyntaxKind.BinaryExpression);
@@ -41,9 +41,9 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             {
                 using (var e = new AssertingEnumerator(expression))
                 {
-                    //        op1
+                    //        unary
                     //      /    \
-                    //     a     op2
+                    //     a     binary
                     //           /  \
                     //          b     c
                     e.AssertNode(SyntaxKind.BinaryExpression);
@@ -108,7 +108,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 {
                     //     unary
                     //      |
-                    //    binary
+                    //    unary
                     //     /  \
                     //    a     c
                     e.AssertNode(SyntaxKind.UnaryExpression);
@@ -125,12 +125,11 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
         private static IEnumerable<object[]> GetUnaryOperatorPairsData()
         {
-            foreach (var op1 in SyntaxFacts.GetUnaryOperators())
+            foreach (var unary in SyntaxFacts.GetUnaryOperators())
             {
-                foreach (var op2 in SyntaxFacts.GetBinaryOperators())
+                foreach (var binary in SyntaxFacts.GetBinaryOperators())
                 {
-                    yield return new object[] { op1, op2 };
-                    yield break;
+                    yield return new object[] { unary, binary };
                 }
             }
         }
