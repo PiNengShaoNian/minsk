@@ -83,5 +83,29 @@
                     return null;
             }
         }
+
+        public static IEnumerable<SyntaxKind> GetBinaryOperators()
+        {
+            var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
+            foreach(var kind in kinds)
+            {
+                if(GetBinaryOperatorPrecedence(kind) > 0)
+                {
+                    yield return kind;
+                }
+            }
+        }
+
+        public static IEnumerable<SyntaxKind> GetUnaryOperators()
+        {
+            var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
+            foreach (var kind in kinds)
+            {
+                if (getUnaryOperatorPrecedence(kind) > 0)
+                {
+                    yield return kind;
+                }
+            }
+        }
     }
 }
