@@ -16,7 +16,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             Assert.Equal(kind, token.Kind);
             Assert.Equal(text, token.Text);
         }
-
+        
         public static IEnumerable<object[]> GetSyntaxKindData()
         {
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
