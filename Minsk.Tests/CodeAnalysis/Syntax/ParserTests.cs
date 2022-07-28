@@ -95,7 +95,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                     e.AssertNode(SyntaxKind.BinaryExpression);
                     e.AssertNode(SyntaxKind.UnaryExpression);
                     e.AssertToken(unaryKind, unaryText);
-                    e.AssertToken(SyntaxKind.NameExpression, "a");
+                    e.AssertNode(SyntaxKind.NameExpression);
                     e.AssertToken(SyntaxKind.IdentifierToken, "a");
                     e.AssertToken(binaryKind, binaryText);
                     e.AssertNode(SyntaxKind.NameExpression);
@@ -130,6 +130,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 foreach (var op2 in SyntaxFacts.GetBinaryOperators())
                 {
                     yield return new object[] { op1, op2 };
+                    yield break;
                 }
             }
         }
