@@ -1,4 +1,4 @@
-﻿namespace Minsk.CodeAnalysis
+﻿namespace Minsk.CodeAnalysis.Text
 {
     public struct TextSpan
     {
@@ -17,18 +17,4 @@
             return new TextSpan(start, end - start);
         }
     }
-
-    public sealed class VariableSymbol
-    {
-        internal VariableSymbol(string name, Type type)
-        {
-            Name = name;
-            Type = type;
-        }
-
-        public string Name { get; }
-        public Type Type { get; }
-    }
-
-
 }
