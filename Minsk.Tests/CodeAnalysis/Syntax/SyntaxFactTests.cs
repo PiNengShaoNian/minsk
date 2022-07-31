@@ -1,5 +1,4 @@
 ﻿using Minsk.CodeAnalysis.Syntax;
-using Minsk.CodeAnalysis.Text;
 
 namespace Minsk.Tests.CodeAnalysis.Syntax
 {
@@ -17,7 +16,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             Assert.Equal(kind, token.Kind);
             Assert.Equal(text, token.Text);
         }
-        
+
         public static IEnumerable<object[]> GetSyntaxKindData()
         {
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
