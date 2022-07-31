@@ -8,7 +8,15 @@ namespace Minsk.CodeAnalysis.Syntax
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly ImmutableArray<SyntaxToken> _tokens;
-        private readonly SourceText _text ;
+
+        public CompilationUnitSyntax ParseCompilationUnit()
+        {
+            var expression = ParseExpression();
+            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            return new CompilationUnitSyntax(expression, endOfFileToken);
+        }
+
+        private readonly SourceText _text;
         private int _position;
         public Parser(SourceText text)
         {
@@ -61,15 +69,6 @@ namespace Minsk.CodeAnalysis.Syntax
             _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
 
             return new SyntaxToken(kind, Current.Position, Current.Text, null);
-        }
-
-
-        public SyntaxTree Parse()
-        {
-
-            var expression = ParseExpression();
-            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expression, endOfFileToken);
         }
 
         private ExpressionSyntax ParseExpression()
