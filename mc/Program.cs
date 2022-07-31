@@ -47,9 +47,15 @@ namespace Minsk
 
                 if (diagnostics.Any())
                 {
+                    var text = syntaxTree.Text;
+
                     foreach (var diagnostic in diagnostics)
                     {
+                        var lineIndex = text.GetLineIndex(diagnostic.Span.Start);
+                        var character = diagnostic.Span.Start - text.Lines[lineIndex].Start + 1;
+                        var lineNumber = lineIndex + 1;
                         Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write($"({lineNumber}, {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Minsk.CodeAnalysis.Text;
+using System.Reflection;
 
 namespace Minsk.CodeAnalysis.Syntax
 {
