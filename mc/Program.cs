@@ -2,6 +2,8 @@
 
 using Minsk.CodeAnalysis;
 using Minsk.CodeAnalysis.Syntax;
+using Minsk.CodeAnalysis.Text;
+using System.Text;
 
 namespace Minsk
 {
@@ -11,28 +13,41 @@ namespace Minsk
         {
             bool showTree = false;
             var variables = new Dictionary<VariableSymbol, object>();
+            var textBuilder = new StringBuilder();
+
             while (true)
             {
-                Console.Write("> ");
-                var line = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(line))
+                if (textBuilder.Length == 0)
+                    Console.Write("> ");
+                else
+                    Console.Write("| ");
+
+                var input = Console.ReadLine();
+                var isBlank = string.IsNullOrWhiteSpace(input);
+
+                if (textBuilder.Length == 0)
                 {
-                    return;
+                    if (isBlank) break;
+                    else if (input == "#showTree")
+                    {
+                        showTree = !showTree;
+                        Console.WriteLine(showTree ? "Showing parse tree" : "Not showing parse tree");
+                        continue;
+                    }
+                    else if (input == "#cls")
+                    {
+                        Console.Clear();
+                        continue;
+                    }
+
                 }
 
-                if (line == "#showTree")
-                {
-                    showTree = !showTree;
-                    Console.WriteLine(showTree ? "Showing parse tree" : "Not showing parse tree");
-                    continue;
-                }
-                else if (line == "#cls")
-                {
-                    Console.Clear();
-                    continue;
-                }
+                textBuilder.AppendLine(input);
+                var text = textBuilder.ToString();
+                var syntaxTree = SyntaxTree.Parse(text);
 
-                var syntaxTree = SyntaxTree.Parse(line);
+                if (!isBlank && syntaxTree.Diagnostics.Any()) continue;
+
                 var compilation = new Compilation(syntaxTree);
                 var result = compilation.Evaluate(variables);
                 var diagnostics = result.Diagnostics;
@@ -47,21 +62,23 @@ namespace Minsk
 
                 if (diagnostics.Any())
                 {
-                    var text = syntaxTree.Text;
-
                     foreach (var diagnostic in diagnostics)
                     {
-                        var lineIndex = text.GetLineIndex(diagnostic.Span.Start);
-                        var character = diagnostic.Span.Start - text.Lines[lineIndex].Start + 1;
+                        var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
+                        TextLine line = syntaxTree.Text.Lines[lineIndex];
+                        var character = diagnostic.Span.Start - line.Start + 1;
                         var lineNumber = lineIndex + 1;
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.Write($"({lineNumber}, {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 
-                        var prefix = line.Substring(0, diagnostic.Span.Start);
-                        var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
-                        var suffix = line.Substring(diagnostic.Span.End);
+                        var prefixSpan = TextSpan.FromBounds(line.Start, diagnostic.Span.Start);
+                        var suffixSpan = TextSpan.FromBounds(diagnostic.Span.End, line.End);
+
+                        var prefix = syntaxTree.Text.ToString(prefixSpan);
+                        var error = syntaxTree.Text.ToString(diagnostic.Span);
+                        var suffix = syntaxTree.Text.ToString(suffixSpan);
 
                         Console.Write("    ");
                         Console.Write(prefix);
@@ -80,6 +97,8 @@ namespace Minsk
                 {
                     Console.WriteLine(result.Value);
                 }
+
+                textBuilder.Clear();
             }
         }
     }
