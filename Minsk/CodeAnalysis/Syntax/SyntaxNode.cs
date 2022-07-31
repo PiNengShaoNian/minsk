@@ -47,11 +47,19 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private static void PrettyPrint(TextWriter writer, SyntaxNode node, string indent = "", bool isLast = false)
         {
+            var isToConsole = writer == Console.Out;
             var marker = isLast ? "└──" : "├──";
 
             writer.Write(indent);
+            if (isToConsole)
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+
             writer.Write(marker);
             writer.Write(" ");
+
+            if (isToConsole)
+                Console.ForegroundColor = node is SyntaxToken ? ConsoleColor.Blue : ConsoleColor.Cyan;
+
             writer.Write(node.Kind);
 
             if (node is SyntaxToken t && t.Value != null)
@@ -59,6 +67,8 @@ namespace Minsk.CodeAnalysis.Syntax
                 writer.Write("   ");
                 writer.Write(t.Value);
             }
+
+            if (isToConsole) Console.ResetColor();
 
             writer.WriteLine();
 
@@ -74,7 +84,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public override string ToString()
         {
-            using(var writer = new StringWriter())
+            using (var writer = new StringWriter())
             {
                 WriteTo(writer);
                 return writer.ToString();
