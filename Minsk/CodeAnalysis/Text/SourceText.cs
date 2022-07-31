@@ -63,7 +63,7 @@ namespace Minsk.CodeAnalysis.Text
                 }
             }
 
-            if (position > lineStart)
+            if (position >= lineStart)
                 AddLine(result, sourceText, lineStart, position, 0);
 
             return result.ToImmutable();
