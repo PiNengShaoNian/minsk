@@ -4,6 +4,13 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 {
     public class ParserTests
     {
+        private static ExpressionSyntax ParseExpression(string text)
+        {
+            SyntaxTree syntaxTree = SyntaxTree.Parse(text);
+            var expression = syntaxTree.Root.Expression;
+            return expression;
+        }
+
         [Theory]
         [MemberData(nameof(GetBinaryOperatorPairsData))]
         public void Parser_BinaryExpression_HonorsPrecedences(SyntaxKind op1, SyntaxKind op2)
@@ -14,7 +21,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             var op2Text = SyntaxFacts.GetText(op2);
 
             var text = $"a {op1Text} b {op2Text} c";
-            var expression = SyntaxTree.Parse(text).Root;
+            var expression = ParseExpression(text);
 
             if (op1Precedence >= op2Precedence)
             {
@@ -81,7 +88,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             var binaryText = SyntaxFacts.GetText(binaryKind);
 
             var text = $"{unaryText} a {binaryText} b";
-            var expression = SyntaxTree.Parse(text).Root;
+            var expression = ParseExpression(text);
 
             if (unaryPrecedence >= binaryPrecedence)
             {
