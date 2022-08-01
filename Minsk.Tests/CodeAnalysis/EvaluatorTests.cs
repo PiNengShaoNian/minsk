@@ -30,7 +30,8 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("false", false)]
         [InlineData("!true", false)]
         [InlineData("!false", true)]
-        [InlineData("(a = 10) * a", 100)]
+        [InlineData(@"{var a = 10
+            a * a}", 100)]
         public void SyntaxFact_GetText_RoundTrips(string expression, object expectedValue)
         {
             var syntaxTree = SyntaxTree.Parse(expression);
