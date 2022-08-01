@@ -4,5 +4,4 @@
     {
         public abstract Type Type { get; }
     }
-
 }

@@ -20,10 +20,19 @@
         EqualsEqualsToken,
         BangEqualsToken,
         EqualsToken,
+        OpenBraceToken,
+        CloseBraceToken,
 
         //Keyword
         TrueKeyword,
         FalseKeyword,
+
+        //Nodes
+        CompilationUnit,
+
+        //Statements
+        BlockStatement,
+        ExpressionStatement,
 
         //Expressions
         LiteralExpression,
@@ -32,8 +41,5 @@
         UnaryExpression,
         AssignmentExpression,
         NameExpression,
-
-        //Nodes
-        CompilationUnit,
     }
 }

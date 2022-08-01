@@ -4,11 +4,11 @@ namespace Minsk.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-        private readonly BoundExpression _root;
+        private readonly BoundStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
 
 
-        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
+        public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
         {
             _root = root;
             _variables = variables;
@@ -16,7 +16,39 @@ namespace Minsk.CodeAnalysis
 
         public object Evaluate()
         {
-            return EvaluateExpression(_root);
+            EvaluateStatement(_root);
+
+            return _lastValue;
+        }
+
+        private object _lastValue;
+
+        private void EvaluateStatement(BoundStatement statement)
+        {
+            switch (statement.Kind)
+            {
+                case BoundNodeKind.BlockStatement:
+                    EvaluateBlockStatement((BoundBlockStatement)statement);
+                    break;
+                case BoundNodeKind.ExpressionStatement:
+                    EvaluateExpressionStatement((BoundExpressionStatement)statement);
+                    break;
+                default:
+                    throw new Exception($"Unpexted statement ${statement.Kind}");
+            }
+        }
+
+        private void EvaluateExpressionStatement(BoundExpressionStatement statement)
+        {
+            _lastValue = EvaluateExpression(statement.Expression);
+        }
+
+        private void EvaluateBlockStatement(BoundBlockStatement node)
+        {
+            foreach (var statement in node.Statements)
+            {
+                EvaluateStatement(statement);
+            }
         }
 
         private object EvaluateExpression(BoundExpression node)
