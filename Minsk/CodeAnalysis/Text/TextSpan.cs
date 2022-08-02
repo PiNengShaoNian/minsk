@@ -16,5 +16,7 @@
         {
             return new TextSpan(start, end - start);
         }
+
+        public override string ToString() => $"{Start}..{End}";
     }
 }
