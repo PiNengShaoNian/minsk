@@ -123,6 +123,30 @@ namespace Minsk.CodeAnalysis.Syntax
                         ++_position;
                     }
                     break;
+                case '<':
+                    if (Lookahead == '=')
+                    {
+                        _kind = SyntaxKind.LessOrEqualsToken;
+                        _position += 2;
+                    }
+                    else
+                    {
+                        _kind = SyntaxKind.LessToken;
+                        ++_position;
+                    }
+                    break;
+                case '>':
+                    if (Lookahead == '=')
+                    {
+                        _kind = SyntaxKind.GreaterOrEqualsToken;
+                        _position += 2;
+                    }
+                    else
+                    {
+                        _kind = SyntaxKind.GreaterToken;
+                        ++_position;
+                    }
+                    break;
                 case '0':
                 case '1':
                 case '2':

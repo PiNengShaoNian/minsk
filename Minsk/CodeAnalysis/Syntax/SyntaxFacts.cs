@@ -12,6 +12,10 @@
                     return 2;
                 case SyntaxKind.EqualsEqualsToken:
                 case SyntaxKind.BangEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualsToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
@@ -91,6 +95,14 @@
                     return "let";
                 case SyntaxKind.VarKeyword:
                     return "var";
+                case SyntaxKind.GreaterToken:
+                    return ">";
+                case SyntaxKind.GreaterOrEqualsToken:
+                    return ">=";
+                case SyntaxKind.LessToken:
+                    return "<";
+                case SyntaxKind.LessOrEqualsToken:
+                    return "<=";
                 default:
                     return null;
             }
@@ -99,9 +111,9 @@
         public static IEnumerable<SyntaxKind> GetBinaryOperators()
         {
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
-            foreach(var kind in kinds)
+            foreach (var kind in kinds)
             {
-                if(GetBinaryOperatorPrecedence(kind) > 0)
+                if (GetBinaryOperatorPrecedence(kind) > 0)
                 {
                     yield return kind;
                 }

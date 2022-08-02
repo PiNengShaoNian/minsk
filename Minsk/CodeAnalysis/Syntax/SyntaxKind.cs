@@ -22,6 +22,10 @@
         EqualsToken,
         OpenBraceToken,
         CloseBraceToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
+        LessOrEqualsToken,
+        LessToken,
 
         //Keyword
         TrueKeyword,
