@@ -29,9 +29,24 @@ namespace Minsk.CodeAnalysis.Syntax
                     return ParseIfStatement();
                 case SyntaxKind.WhileKeyword:
                     return ParseWhileStatement();
+                case SyntaxKind.ForKeyword:
+                    return ParseForStatement();
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private ForStatementSyntax ParseForStatement()
+        {
+            var keyword = Match(SyntaxKind.ForKeyword);
+            var identifier = Match(SyntaxKind.IdentifierToken);
+            var equalsToken = Match(SyntaxKind.EqualsToken);
+            var lowerBound = ParseExpression();
+            var toKeyword = Match(SyntaxKind.ToKeyword);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+
+            return new ForStatementSyntax(keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
         }
 
         private StatementSyntax ParseWhileStatement()

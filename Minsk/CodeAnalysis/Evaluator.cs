@@ -42,8 +42,25 @@ namespace Minsk.CodeAnalysis
                 case BoundNodeKind.WhileStatement:
                     EvaluateWhileStatement((BoundWhileStatement)statement);
                     break;
+                case BoundNodeKind.ForStatement:
+                    EvaluateForStatement((BoundForStatement)statement);
+                    break;
                 default:
                     throw new Exception($"Unpexted statement ${statement.Kind}");
+            }
+        }
+
+        private void EvaluateForStatement(BoundForStatement node)
+        {
+            var lowerBound = (int)EvaluateExpression(node.LowerBound);
+            var variable = node.Variable;
+            _variables[variable] = lowerBound;
+            var upperBound = (int)EvaluateExpression(node.UpperBound);
+
+            for(int i  = lowerBound; i < upperBound; ++i)
+            {
+                _variables[node.Variable] = i;
+                EvaluateStatement(node.Body);
             }
         }
 
