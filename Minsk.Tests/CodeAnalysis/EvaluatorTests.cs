@@ -137,16 +137,15 @@ namespace Minsk.Tests.CodeAnalysis
         {
             var text = @"
                 {
-                [[[)]]]
+                [)][]
              ";
 
             var diagnostics = @"
                 Unexpected token <CloseParenthesisToken>, expected<IdentifierToken>.
                 Unexpected token <EndOfFileToken>, expected<CloseBraceToken>.
-                Variable ')' dosn't exist.
                 ";
 
-            //AssertDiagnostics(text, diagnostics);
+            AssertDiagnostics(text, diagnostics);
         }
 
         [Fact]
