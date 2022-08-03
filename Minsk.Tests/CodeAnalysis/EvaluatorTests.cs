@@ -86,6 +86,14 @@ namespace Minsk.Tests.CodeAnalysis
                           }
                           a
                       }", 5)]
+        [InlineData(@"{
+                          var a = 0
+                          for i = 0 to 10
+                          {
+                              a = a + i
+                          }
+                          a
+                      }", 45)]
         public void Evaluator_Computes_CorrectValues(string expression, object expectedValue)
         {
             AssertValue(expression, expectedValue);
@@ -172,6 +180,78 @@ namespace Minsk.Tests.CodeAnalysis
                 {
                     var x = 10
                     x = [true]
+                }
+                ";
+
+            var diagnostics = @$"
+                Cannot convert type '{typeof(bool)}' to '{typeof(int)}'.
+                ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        private void Evaluator_IfStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    if [10]
+                        x = 10
+                }
+                ";
+
+            var diagnostics = @$"
+                Cannot convert type '{typeof(int)}' to '{typeof(bool)}'.
+                ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        private void Evaluator_WhileStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    while [10]
+                        x = 10
+                }
+                ";
+
+            var diagnostics = @$"
+                Cannot convert type '{typeof(int)}' to '{typeof(bool)}'.
+                ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        private void Evaluator_ForStatement_Reports_CannotConvert_LowerBound()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    for i = [false] to 10
+                        x = x + i
+                }
+                ";
+
+            var diagnostics = @$"
+                Cannot convert type '{typeof(bool)}' to '{typeof(int)}'.
+                ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        private void Evaluator_ForStatement_Reports_CannotConvert_UpperBound()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    for i = 0 to [true]
+                        x = x + i
                 }
                 ";
 
