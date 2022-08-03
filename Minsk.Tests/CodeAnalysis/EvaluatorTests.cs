@@ -133,12 +133,41 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
+        private void Evaluator_BlockStatement_Reports_NoInfiniteLoop()
+        {
+            var text = @"
+                {
+                [[[)]]]
+             ";
+
+            var diagnostics = @"
+                Unexpected token <CloseParenthesisToken>, expected<IdentifierToken>.
+                Unexpected token <EndOfFileToken>, expected<CloseBraceToken>.
+                Variable ')' dosn't exist.
+                ";
+
+            //AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         private void Evaluator_NameExpression_Reports_Undefined()
         {
             var text = @"[x] * 10";
 
             var diagnostics = @"
                 Variable 'x' dosn't exist.
+                ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        private void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
+        {
+            var text = @"[]";
+
+            var diagnostics = @"
+                   Unexpected token <EndOfFileToken>, expected<IdentifierToken>.
                 ";
 
             AssertDiagnostics(text, diagnostics);

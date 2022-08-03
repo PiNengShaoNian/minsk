@@ -39,13 +39,13 @@ namespace Minsk.CodeAnalysis
 
         public void ReportBadCharacter(int position, char current)
         {
-            var message = $"ERROR: bad character input: '{current}'.";
+            var message = $"bad character input: '{current}'.";
             Report(new TextSpan(position, 1), message);
         }
 
         public void ReportUnexpectedToken(TextSpan span, SyntaxKind actualKind, SyntaxKind expectedKind)
         {
-            var message = $"ERROR: Unexpected token <{actualKind}>, expected<{expectedKind}>.";
+            var message = $"Unexpected token <{actualKind}>, expected<{expectedKind}>.";
             Report(span, message);
         }
 
