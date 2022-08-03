@@ -39,17 +39,26 @@ namespace Minsk.CodeAnalysis
                 case BoundNodeKind.IfStatement:
                     EvaluateIfStatement((BoundIfStatement)statement);
                     break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluateWhileStatement((BoundWhileStatement)statement);
+                    break;
                 default:
                     throw new Exception($"Unpexted statement ${statement.Kind}");
             }
         }
 
+        private void EvaluateWhileStatement(BoundWhileStatement statement)
+        {
+            while ((bool)EvaluateExpression(statement.Condition))
+                EvaluateStatement(statement.Body);
+        }
+
         private void EvaluateIfStatement(BoundIfStatement statement)
         {
             var condition = (bool)EvaluateExpression(statement.Condition);
-            if(condition)
+            if (condition)
                 EvaluateStatement(statement.ThenStatement);
-            else if(statement.ElseStatement != null)
+            else if (statement.ElseStatement != null)
                 EvaluateStatement(statement.ElseStatement);
         }
 

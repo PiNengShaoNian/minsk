@@ -66,6 +66,26 @@ namespace Minsk.Tests.CodeAnalysis
                               a = 200
                            a
                       }", 200)]
+        [InlineData(@"{
+                          var a = 0
+                          var i = 10
+                          while i > 0
+                          {
+                              i = i - 1
+                              a = a + 1
+                          }
+                          a
+                      }", 10)]
+        [InlineData(@"{
+                          var a = 0
+                          var i = 10
+                          while i > 0
+                          {
+                              i = i - 2
+                              a = a + 1
+                          }
+                          a
+                      }", 5)]
         public void Evaluator_Computes_CorrectValues(string expression, object expectedValue)
         {
             AssertValue(expression, expectedValue);
