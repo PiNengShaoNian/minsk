@@ -6,6 +6,7 @@
         BlockStatement,
         VariableDeclaration,
         ExpressionStatement,
+        IfStatement,
 
         //Expressions
         UnaryExpression,
@@ -14,5 +15,4 @@
         VariableExpression,
         AssignmentExpression,
     }
-
 }

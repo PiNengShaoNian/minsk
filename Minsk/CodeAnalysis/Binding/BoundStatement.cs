@@ -17,5 +17,4 @@
 
         public override BoundNodeKind Kind => BoundNodeKind.VariableDeclaration;
     }
-
 }

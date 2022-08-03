@@ -53,6 +53,10 @@
                     return SyntaxKind.LetKeyword;
                 case "var":
                     return SyntaxKind.VarKeyword;
+                case "if":
+                    return SyntaxKind.IfKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -103,6 +107,10 @@
                     return "<";
                 case SyntaxKind.LessOrEqualsToken:
                     return "<=";
+                case SyntaxKind.IfKeyword:
+                    return "if";
+                case SyntaxKind.ElseKeyword:
+                    return "else";
                 default:
                     return null;
             }

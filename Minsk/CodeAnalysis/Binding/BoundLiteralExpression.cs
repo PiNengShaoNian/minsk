@@ -12,5 +12,4 @@
 
         public object Value { get; }
     }
-
 }

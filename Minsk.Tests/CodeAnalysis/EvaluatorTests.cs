@@ -46,6 +46,26 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("!false", true)]
         [InlineData(@"{var a = 10
             a * a}", 100)]
+        [InlineData(@"{
+                           var a = 0
+                           if a == 0
+                              a = 100      
+                           a
+                      }", 100)]
+        [InlineData(@"{
+                           var a = 1
+                           if a == 0
+                              a = 100      
+                           a
+                      }", 1)]
+        [InlineData(@"{
+                           var a = 1
+                           if a == 0
+                              a = 100      
+                           else 
+                              a = 200
+                           a
+                      }", 200)]
         public void Evaluator_Computes_CorrectValues(string expression, object expectedValue)
         {
             AssertValue(expression, expectedValue);

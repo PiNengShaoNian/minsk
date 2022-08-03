@@ -36,9 +36,21 @@ namespace Minsk.CodeAnalysis
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)statement);
                     break;
+                case BoundNodeKind.IfStatement:
+                    EvaluateIfStatement((BoundIfStatement)statement);
+                    break;
                 default:
                     throw new Exception($"Unpexted statement ${statement.Kind}");
             }
+        }
+
+        private void EvaluateIfStatement(BoundIfStatement statement)
+        {
+            var condition = (bool)EvaluateExpression(statement.Condition);
+            if(condition)
+                EvaluateStatement(statement.ThenStatement);
+            else if(statement.ElseStatement != null)
+                EvaluateStatement(statement.ElseStatement);
         }
 
         private void EvaluateVariableDeclaration(BoundVariableDeclaration statement)
