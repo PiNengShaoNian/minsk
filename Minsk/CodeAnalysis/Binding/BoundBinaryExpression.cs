@@ -14,9 +14,8 @@
 
         public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
 
-        public BoundExpression Right { get; }
         public BoundExpression Left { get; }
+        public BoundExpression Right { get; }
         public BoundBinaryOperator Op { get; }
     }
-
 }

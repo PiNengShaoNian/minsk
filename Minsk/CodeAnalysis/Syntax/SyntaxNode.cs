@@ -57,7 +57,6 @@ namespace Minsk.CodeAnalysis.Syntax
                 Console.ForegroundColor = ConsoleColor.DarkGray;
 
             writer.Write(marker);
-            writer.Write(" ");
 
             if (isToConsole)
                 Console.ForegroundColor = node is SyntaxToken ? ConsoleColor.Blue : ConsoleColor.Cyan;
@@ -74,7 +73,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             writer.WriteLine();
 
-            indent += isLast ? " " : "│ ";
+            indent += isLast ? "    " : "│   ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 
