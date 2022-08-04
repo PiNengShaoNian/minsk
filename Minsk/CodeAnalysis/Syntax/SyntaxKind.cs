@@ -15,7 +15,9 @@
         CloseParenthesisToken,
         IdentifierToken,
         BangToken,
+        AmpersandToken,
         AmpersandAmpersandToken,
+        PipeToken,
         PipePipeToken,
         EqualsEqualsToken,
         BangEqualsToken,
@@ -26,6 +28,8 @@
         GreaterOrEqualsToken,
         LessOrEqualsToken,
         LessToken,
+        TildeToken,
+        HatToken,
 
         //Keyword
         TrueKeyword,

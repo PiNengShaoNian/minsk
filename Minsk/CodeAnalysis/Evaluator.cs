@@ -57,7 +57,7 @@ namespace Minsk.CodeAnalysis
             _variables[variable] = lowerBound;
             var upperBound = (int)EvaluateExpression(node.UpperBound);
 
-            for(int i  = lowerBound; i < upperBound; ++i)
+            for (int i = lowerBound; i < upperBound; ++i)
             {
                 _variables[node.Variable] = i;
                 EvaluateStatement(node.Body);
@@ -159,6 +159,21 @@ namespace Minsk.CodeAnalysis
                     return (int)left > (int)right;
                 case BoundBinaryOperatorKind.GreaterOrEquals:
                     return (int)left >= (int)right;
+                case BoundBinaryOperatorKind.BitwiseAnd:
+                    if (b.Type == typeof(int))
+                        return (int)left & (int)right;
+                    else
+                        return (bool)left & (bool)right;
+                case BoundBinaryOperatorKind.BitwiseOr:
+                    if (b.Type == typeof(int))
+                        return (int)left | (int)right;
+                    else
+                        return (bool)left | (bool)(right);
+                case BoundBinaryOperatorKind.BitwiseXor:
+                    if (b.Type == typeof(int))
+                        return (int)left ^ (int)right;
+                    else
+                        return (bool)left ^ (bool)right;
                 default:
                     throw new Exception($"Unpexted binary operator ${b.Op.Kind}");
             }
@@ -175,6 +190,8 @@ namespace Minsk.CodeAnalysis
                     return (int)operand;
                 case BoundUnaryOperatorKind.LogicalNegation:
                     return !(bool)operand;
+                case BoundUnaryOperatorKind.OnesComplement:
+                    return ~(int)operand;
                 default:
                     throw new Exception($"Unpexted unary operator ${u.Op.Kind}");
             }

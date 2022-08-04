@@ -8,6 +8,7 @@ namespace Minsk.Tests.CodeAnalysis
         [Theory]
         [InlineData("1", 1)]
         [InlineData("-1", -1)]
+        [InlineData("~1", -2)]
         [InlineData("+1", 1)]
         [InlineData("1 + 2", 3)]
         [InlineData("1 - 2", -1)]
@@ -31,6 +32,13 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("3 >= 4", false)]
         [InlineData("3 >= 3", true)]
         [InlineData("3 >= 2", true)]
+        
+        [InlineData("1 | 2", 3)]
+        [InlineData("1 | 0", 1)]
+        [InlineData("1 & 2", 0)]
+        [InlineData("1 & 0", 0)]
+        [InlineData("1 ^ 0", 1)]
+        [InlineData("1 ^ 3", 2)]
 
         [InlineData("true == false", false)]
         [InlineData("true == true", true)]
@@ -40,10 +48,36 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("true != true", false)]
         [InlineData("false != false", false)]
         [InlineData("false != true", true)]
+
+        [InlineData("false | true", true)]
+        [InlineData("true | false", true)]
+        [InlineData("false | false", false)]
+        [InlineData("true | true", true)]
+
+        [InlineData("false & true", false)]
+        [InlineData("true & false", false)]
+        [InlineData("false & false", false)]
+        [InlineData("true & true", true)]
+
+        [InlineData("false ^ true", true)]
+        [InlineData("true ^ false", true)]
+        [InlineData("false ^ false", false)]
+        [InlineData("true ^ true", false)]
+
+        [InlineData("false && true", false)]
+        [InlineData("true && false", false)]
+        [InlineData("true && true", true)]
+        [InlineData("false && false", false)]
+        [InlineData("false || true", true)]
+        [InlineData("true || false", true)]
+        [InlineData("true || true", true)]
+        [InlineData("false || false", false)]
+        
         [InlineData("true", true)]
         [InlineData("false", false)]
         [InlineData("!true", false)]
         [InlineData("!false", true)]
+        [InlineData("var a = 10", 10)]
         [InlineData(@"{var a = 10
             a * a}", 100)]
         [InlineData(@"{

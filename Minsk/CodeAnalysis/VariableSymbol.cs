@@ -13,6 +13,4 @@
         public bool IsReadOnly { get; }
         public Type Type { get; }
     }
-
-
 }
