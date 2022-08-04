@@ -1,6 +1,7 @@
 ﻿using Minsk.CodeAnalysis.Syntax;
 using Minsk.CodeAnalysis.Binding;
 using System.Collections.Immutable;
+using Minsk.CodeAnalysis.Lowering;
 
 namespace Minsk.CodeAnalysis
 {
@@ -47,14 +48,23 @@ namespace Minsk.CodeAnalysis
             {
                 return new EvaluationResult(diagnostics.ToImmutableArray(), null);
             }
-            var evaluator = new Evaluator(GlobalScope.Statement, variables);
+            var statement = GetStatement();
+            var evaluator = new Evaluator(statement, variables);
             var value = evaluator.Evaluate();
             return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
         }
 
         public void EmitTree(TextWriter writer)
         {
+            var statement = GetStatement();
             GlobalScope.Statement.WriteTo(writer);
+        }
+
+        private BoundStatement GetStatement()
+        {
+            var result = GlobalScope.Statement;
+
+            return Lowerer.Lower(result);
         }
     }
 }
