@@ -90,7 +90,7 @@ namespace Minsk.CodeAnalysis.Binding
                 {
                     if (buider == null)
                     {
-                        buider = ImmutableArray.CreateBuilder<BoundStatement>();
+                        buider = ImmutableArray.CreateBuilder<BoundStatement>(node.Statements.Length);
                         for (var j = 0; j < i; ++j)
                             buider.Add(node.Statements[j]);
                     }
