@@ -158,18 +158,20 @@ namespace Minsk.CodeAnalysis.Lowering
             //      }
             // }
 
-            var variableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
-            var variableExpression = new BoundVariableExpression(node.Variable);
+            var lowerBoundVariableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
+            var lowerBoundVariableExpression = new BoundVariableExpression(node.Variable);
+            var upperBoundVarialbe = new VariableSymbol("uppderBound", true, typeof(int));
+            var upperBoundVarialbeDeclaration = new BoundVariableDeclaration(upperBoundVarialbe, node.UpperBound);
             var condition = new BoundBinaryExpression(
-                variableExpression,
-                BoundBinaryOperator.Bind(SyntaxKind.LessToken, typeof(int), typeof(int)),
-                node.UpperBound
+                    lowerBoundVariableExpression,
+                    BoundBinaryOperator.Bind(SyntaxKind.LessToken, typeof(int), typeof(int)),
+                    new BoundVariableExpression(upperBoundVarialbe)
                 );
             var increment = new BoundExpressionStatement(
                     new BoundAssignmentExpression(
                         node.Variable,
                         new BoundBinaryExpression(
-                            variableExpression,
+                            lowerBoundVariableExpression,
                             BoundBinaryOperator.Bind(SyntaxKind.PlusToken, typeof(int), typeof(int)),
                             new BoundLiteralExpression(1)
                         )
@@ -177,7 +179,12 @@ namespace Minsk.CodeAnalysis.Lowering
                 );
             var whileBlock = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(node.Body, increment));
             var whileStatement = new BoundWhileStatement(condition, whileBlock);
-            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(variableDeclaration, whileStatement));
+            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                    lowerBoundVariableDeclaration, 
+                    upperBoundVarialbeDeclaration, 
+                    whileStatement
+                    )
+                );
 
             return RewriteStatement(result);
         }

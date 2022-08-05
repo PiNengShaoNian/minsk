@@ -128,6 +128,13 @@ namespace Minsk.Tests.CodeAnalysis
                           }
                           a
                       }", 45)]
+        [InlineData(@"{
+                          var a = 10
+                          for i = 0 to (a = a - 1)
+                          {
+                          }
+                          a
+                      }", 9)]
         public void Evaluator_Computes_CorrectValues(string expression, object expectedValue)
         {
             AssertValue(expression, expectedValue);
