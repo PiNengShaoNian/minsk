@@ -9,6 +9,9 @@
         IfStatement,
         WhileStatement,
         ForStatement,
+        GotoStatement,
+        LabelStatement,
+        ConditionalGotoStatement,
 
         //Expressions
         UnaryExpression,

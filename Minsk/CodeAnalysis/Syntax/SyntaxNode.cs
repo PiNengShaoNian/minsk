@@ -73,7 +73,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             writer.WriteLine();
 
-            indent += isLast ? "    " : "│   ";
+            indent += isLast ? "  " : "│ ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 

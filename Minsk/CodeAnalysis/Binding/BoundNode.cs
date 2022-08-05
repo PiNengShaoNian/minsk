@@ -75,7 +75,6 @@ namespace Minsk.CodeAnalysis.Binding
             if (isToConsole)
                 Console.ForegroundColor = GetColor(node);
 
-
             var text = GetText(node);
             Console.Write(text);
             var isFirstProperty = true;
@@ -113,7 +112,7 @@ namespace Minsk.CodeAnalysis.Binding
 
             writer.WriteLine();
 
-            indent += isLast ? " " : "│ ";
+            indent += isLast ? "   " : "│   ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 
