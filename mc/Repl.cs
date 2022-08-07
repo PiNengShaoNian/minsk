@@ -255,7 +255,7 @@ namespace Minsk
         {
             var remainder = document[view.CurrentLine].Substring(view.CurrentCharacter);
             document[view.CurrentLine] = document[view.CurrentLine].Substring(0, view.CurrentCharacter);
-             
+
             var lineIndex = view.CurrentLine + 1;
             document.Insert(lineIndex, remainder);
             view.CurrentCharacter = 0;
@@ -293,7 +293,15 @@ namespace Minsk
             var lineIndex = view.CurrentLine;
             var line = document[lineIndex];
             if (start >= line.Length)
+            {
+                if (view.CurrentLine == document.Count - 1)
+                    return;
+
+                var nextLine = document[view.CurrentLine + 1];
+                document[view.CurrentLine] += nextLine;
+                document.RemoveAt(view.CurrentLine + 1);
                 return;
+            }
 
             var before = line.Substring(0, start);
             var after = line.Substring(start + 1);
