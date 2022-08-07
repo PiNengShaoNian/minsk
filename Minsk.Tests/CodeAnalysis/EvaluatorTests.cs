@@ -33,7 +33,7 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("3 >= 4", false)]
         [InlineData("3 >= 3", true)]
         [InlineData("3 >= 2", true)]
-        
+
         [InlineData("1 | 2", 3)]
         [InlineData("1 | 0", 1)]
         [InlineData("1 & 2", 0)]
@@ -73,7 +73,7 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("true || false", true)]
         [InlineData("true || true", true)]
         [InlineData("false || false", false)]
-        
+
         [InlineData("true", true)]
         [InlineData("false", false)]
         [InlineData("!true", false)]
@@ -254,7 +254,7 @@ namespace Minsk.Tests.CodeAnalysis
                 ";
 
             var diagnostics = @$"
-                Cannot convert type '{typeof(bool)}' to '{typeof(int)}'.
+                Cannot convert type '{TypeSymbol.Bool}' to '{TypeSymbol.Int}'.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -272,7 +272,7 @@ namespace Minsk.Tests.CodeAnalysis
                 ";
 
             var diagnostics = @$"
-                Cannot convert type '{typeof(int)}' to '{typeof(bool)}'.
+                Cannot convert type '{TypeSymbol.Int}' to '{TypeSymbol.Bool}'.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -290,7 +290,7 @@ namespace Minsk.Tests.CodeAnalysis
                 ";
 
             var diagnostics = @$"
-                Cannot convert type '{typeof(int)}' to '{typeof(bool)}'.
+                Cannot convert type '{TypeSymbol.Int}' to '{TypeSymbol.Bool}'.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -308,7 +308,7 @@ namespace Minsk.Tests.CodeAnalysis
                 ";
 
             var diagnostics = @$"
-                Cannot convert type '{typeof(bool)}' to '{typeof(int)}'.
+                Cannot convert type '{TypeSymbol.Bool}' to '{TypeSymbol.Int}'.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -326,7 +326,7 @@ namespace Minsk.Tests.CodeAnalysis
                 ";
 
             var diagnostics = @$"
-                Cannot convert type '{typeof(bool)}' to '{typeof(int)}'.
+                Cannot convert type '{TypeSymbol.Bool}' to '{TypeSymbol.Int}'.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -338,7 +338,7 @@ namespace Minsk.Tests.CodeAnalysis
             var text = @"[+]true";
 
             var diagnostics = @$"
-                Unary operator '+' is not defined for type {typeof(bool)}.
+                Unary operator '+' is not defined for type {TypeSymbol.Bool}.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -350,7 +350,7 @@ namespace Minsk.Tests.CodeAnalysis
             var text = @"10 [+] false";
 
             var diagnostics = @$"
-                binary operator '+' is not defined for types {typeof(int)} and {typeof(bool)}.
+                binary operator '+' is not defined for types {TypeSymbol.Int} and {TypeSymbol.Bool}.
                 ";
 
             AssertDiagnostics(text, diagnostics);

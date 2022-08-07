@@ -1,4 +1,6 @@
-﻿namespace Minsk.CodeAnalysis.Binding
+﻿using Minsk.CodeAnalysis.Symbols;
+
+namespace Minsk.CodeAnalysis.Binding
 {
 
     internal sealed class BoundUnaryExpression : BoundExpression
@@ -9,7 +11,7 @@
             Operand = operand;
         }
 
-        public override Type Type => Op.Type;
+        public override TypeSymbol Type => Op.Type;
 
         public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
 

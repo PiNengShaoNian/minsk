@@ -161,11 +161,11 @@ namespace Minsk.CodeAnalysis.Lowering
 
             var lowerBoundVariableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
             var lowerBoundVariableExpression = new BoundVariableExpression(node.Variable);
-            var upperBoundVarialbe = new VariableSymbol("uppderBound", true, typeof(int));
+            var upperBoundVarialbe = new VariableSymbol("uppderBound", true, TypeSymbol.Int);
             var upperBoundVarialbeDeclaration = new BoundVariableDeclaration(upperBoundVarialbe, node.UpperBound);
             var condition = new BoundBinaryExpression(
                     lowerBoundVariableExpression,
-                    BoundBinaryOperator.Bind(SyntaxKind.LessToken, typeof(int), typeof(int)),
+                    BoundBinaryOperator.Bind(SyntaxKind.LessToken, TypeSymbol.Int, TypeSymbol.Int),
                     new BoundVariableExpression(upperBoundVarialbe)
                 );
             var increment = new BoundExpressionStatement(
@@ -173,7 +173,7 @@ namespace Minsk.CodeAnalysis.Lowering
                         node.Variable,
                         new BoundBinaryExpression(
                             lowerBoundVariableExpression,
-                            BoundBinaryOperator.Bind(SyntaxKind.PlusToken, typeof(int), typeof(int)),
+                            BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int),
                             new BoundLiteralExpression(1)
                         )
                     )
