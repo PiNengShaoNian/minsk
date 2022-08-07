@@ -25,9 +25,11 @@ namespace Minsk
 
                 if (isKeyword)
                     Console.ForegroundColor = ConsoleColor.Blue;
-                //else if (isNumber)
-                //    Console.ForegroundColor = ConsoleColor.Gray;
+                else if (isNumber)
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                 else if (isIdentifer)
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                else
                     Console.ForegroundColor = ConsoleColor.DarkGray;
 
                 Console.Write(token.Text);
@@ -125,19 +127,10 @@ namespace Minsk
 
             var syntaxTree = SyntaxTree.Parse(text);
             //Use Statement beasue we need to exclude the EndOfFileToken.
-            if (GetLastToken(syntaxTree.Root.Statement).IsMissing)
+            if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
                 return false;
 
             return true;
-        }
-
-        private static SyntaxToken GetLastToken(SyntaxNode node)
-        {
-            if (node is SyntaxToken token)
-                return token;
-
-            // A Syntax node should always contain at least 1 token.
-            return GetLastToken(node.GetChildren().Last());
         }
     }
 }
