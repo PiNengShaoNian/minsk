@@ -17,7 +17,7 @@ namespace Minsk
         {
             var tokens = SyntaxTree.ParseTokens(line);
 
-            foreach(var token in tokens)
+            foreach (var token in tokens)
             {
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
@@ -124,10 +124,20 @@ namespace Minsk
                 return true;
 
             var syntaxTree = SyntaxTree.Parse(text);
-            if (syntaxTree.Diagnostics.Any())
+            //Use Statement beasue we need to exclude the EndOfFileToken.
+            if (GetLastToken(syntaxTree.Root.Statement).IsMissing)
                 return false;
 
             return true;
+        }
+
+        private static SyntaxToken GetLastToken(SyntaxNode node)
+        {
+            if (node is SyntaxToken token)
+                return token;
+
+            // A Syntax node should always contain at least 1 token.
+            return GetLastToken(node.GetChildren().Last());
         }
     }
 }
