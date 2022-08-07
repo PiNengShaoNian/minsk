@@ -8,12 +8,12 @@ namespace Minsk.CodeAnalysis.Lowering
     {
         private int _labelCount = 0;
 
-        private LabelSymbol GenerateLabel()
+        private BoundLabel GenerateLabel()
         {
             var name = $"Label{_labelCount}";
 
             ++_labelCount;
-            return new LabelSymbol(name);
+            return new BoundLabel(name);
         }
 
         private Lowerer()
