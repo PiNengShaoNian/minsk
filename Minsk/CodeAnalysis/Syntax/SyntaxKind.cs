@@ -30,6 +30,7 @@
         LessToken,
         TildeToken,
         HatToken,
+        StringToken,
 
         //Keyword
         TrueKeyword,

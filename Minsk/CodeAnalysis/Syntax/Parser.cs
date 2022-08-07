@@ -109,7 +109,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 //lets skip the current token and continue.
                 //in order to  avoid an infinite loop. We don't report an error, because
                 //we'll already tried to parse an expression statement and reported one.
-                if(Current == startToken)
+                if (Current == startToken)
                 {
                     NextToken();
                 }
@@ -238,6 +238,8 @@ namespace Minsk.CodeAnalysis.Syntax
                     return ParseBooleanLiteral();
                 case SyntaxKind.NumberToken:
                     return ParseNumberLiteral();
+                case SyntaxKind.StringToken:
+                    return ParseStringLiteral();
                 case SyntaxKind.IdentifierToken:
                 default:
                     return ParseNameExpression();
@@ -248,6 +250,13 @@ namespace Minsk.CodeAnalysis.Syntax
         {
             var numberToken = Match(SyntaxKind.NumberToken);
             return new LiteralExpressionSyntax(numberToken);
+        }
+
+        private ExpressionSyntax ParseStringLiteral()
+        {
+            var stringToken = Match(SyntaxKind.StringToken);
+
+            return new LiteralExpressionSyntax(stringToken);
         }
 
         private ExpressionSyntax ParseParenthesizedExpression()
