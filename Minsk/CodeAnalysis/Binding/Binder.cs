@@ -209,17 +209,17 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var name = syntax.IdentifierToken.Text;
 
-            if(string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 // this means the token was inserted by the parser. We already reported error so 
                 //we can just return an error expression.
-                return new BoundLiteralExpression(0);
+                return new BoundErrorExpression();
             }
 
             if (!_scope.TryLookup(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
-                return new BoundLiteralExpression(0);
+                return new BoundErrorExpression();
             }
 
             return new BoundVariableExpression(variable);
@@ -229,12 +229,16 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var boundLeft = BindExpression(syntax.Left);
             var boundRight = BindExpression(syntax.Right);
+
+            if (boundLeft.Type == TypeSymbol.Error || boundRight.Type == TypeSymbol.Error)
+                return new BoundErrorExpression();
+
             var boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.Kind, boundLeft.Type, boundRight.Type);
 
             if (boundOperator == null)
             {
                 _diagnostics.ReportUndefinedBinaryOperator(syntax.OperatorToken.Span, syntax.OperatorToken.Text, boundLeft.Type, boundRight.Type);
-                return boundLeft;
+                return new BoundErrorExpression();
             }
 
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
@@ -243,6 +247,10 @@ namespace Minsk.CodeAnalysis.Binding
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
             var boundOperand = BindExpression(syntax.Operand);
+
+            if (boundOperand.Type == TypeSymbol.Error)
+                return new BoundErrorExpression();
+
             var boundOperator = BoundUnaryOperator.Bind(syntax.OperatorToken.Kind, boundOperand.Type);
 
             if (boundOperator == null)
@@ -260,5 +268,4 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundLiteralExpression(value);
         }
     }
-
 }
