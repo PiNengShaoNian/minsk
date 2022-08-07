@@ -145,9 +145,16 @@ namespace Minsk.CodeAnalysis.Binding
                     return RewriteVariableExpression((BoundVariableExpression)node);
                 case BoundNodeKind.AssignmentExpression:
                     return RewriteAssignmentExpression((BoundAssignmentExpression)node);
+                case BoundNodeKind.ErrorExpression:
+                    return RewriteErrorExpression((BoundErrorExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)
+        {
+            return node;
         }
 
         protected virtual BoundExpression RewriteUnaryExpression(BoundUnaryExpression node)
