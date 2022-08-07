@@ -2,6 +2,7 @@
 using Minsk.CodeAnalysis.Binding;
 using System.Collections.Immutable;
 using Minsk.CodeAnalysis.Lowering;
+using Minsk.CodeAnalysis.Symbols;
 
 namespace Minsk.CodeAnalysis
 {
