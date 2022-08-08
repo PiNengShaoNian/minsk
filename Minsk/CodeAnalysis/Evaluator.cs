@@ -92,9 +92,23 @@ namespace Minsk.CodeAnalysis
                     return EvaluateBinaryExpression((BoundBinaryExpression)node);
                 case BoundNodeKind.CallExpression:
                     return EvaluateCallExpression((BoundCallExpression)node);
+                case BoundNodeKind.ConversionExpression:
+                    return EvaluateConversionExpression((BoundConversionExpression)node);
                 default:
                     throw new Exception($"Unpexted node ${node.Kind}");
             }
+        }
+
+        private object EvaluateConversionExpression(BoundConversionExpression node)
+        {
+            if (node.Type == TypeSymbol.Bool)
+                return Convert.ToBoolean(EvaluateExpression(node.Expression));
+            else if (node.Type == TypeSymbol.String)
+                return Convert.ToString(EvaluateExpression(node.Expression));
+            else if (node.Type == TypeSymbol.Int)
+                return Convert.ToInt32(EvaluateExpression(node.Expression));
+            else
+                throw new Exception($"Unexpected type {node.Type}");
         }
 
         private object EvaluateCallExpression(BoundCallExpression node)
@@ -109,11 +123,11 @@ namespace Minsk.CodeAnalysis
                 Console.WriteLine(message);
                 return null;
             }
-            else if(node.Function == BuiltinFunctions.Random)
+            else if (node.Function == BuiltinFunctions.Random)
             {
-                if(_random == null)
+                if (_random == null)
                     _random = new Random();
-                
+
                 var max = (int)EvaluateExpression(node.Arguments[0]);
                 return _random.Next(max);
             }
