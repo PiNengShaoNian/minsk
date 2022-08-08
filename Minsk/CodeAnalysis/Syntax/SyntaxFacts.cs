@@ -135,6 +135,8 @@
                     return "^";
                 case SyntaxKind.TildeToken:
                     return "~";
+                case SyntaxKind.Comma:
+                    return ",";
                 default:
                     return null;
             }

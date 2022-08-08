@@ -31,6 +31,7 @@
         TildeToken,
         HatToken,
         StringToken,
+        Comma,
 
         //Keyword
         TrueKeyword,
@@ -62,5 +63,6 @@
         UnaryExpression,
         AssignmentExpression,
         NameExpression,
+        CallExpression,
     }
 }

@@ -91,5 +91,29 @@ namespace Minsk.CodeAnalysis
             var message = $"Unterminated string literal.";
             Report(span, message);
         }
+
+        internal void ReportUndefinedFunction(TextSpan span, string name)
+        {
+            var message = $"Function '{name}' dosn't exist.";
+            Report(span, message);
+        }
+
+        internal void ReportWrongArgumentCount(TextSpan span, string name, int expectedCount, int actualCount)
+        {
+            var message = $"Function '{name}' request {expectedCount} arguments but was given {actualCount}.";
+            Report(span, message);
+        }
+
+        internal void ReportWrongArgumentType(TextSpan span, string name, TypeSymbol expectedType, TypeSymbol actualType)
+        {
+            var message = $"Parameter '{name}' requires value of type '{expectedType}' but was given '{actualType}'.";
+            Report(span, message);
+        }
+
+        internal void ReportExpressionMustHaveValue(TextSpan span)
+        {
+            var message = "Expression must have a value.";
+            Report(span, message);
+        }
     }
 }

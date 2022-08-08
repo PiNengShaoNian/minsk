@@ -131,7 +131,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
-            var expression = BindExpression(syntax.Expression);
+            var expression = BindExpression(syntax.Expression, canBeVoid: true);
 
             return new BoundExpressionStatement(expression);
         }
@@ -161,7 +161,20 @@ namespace Minsk.CodeAnalysis.Binding
             return result;
         }
 
-        public BoundExpression BindExpression(ExpressionSyntax syntax)
+        public BoundExpression BindExpression(ExpressionSyntax syntax, bool canBeVoid = false)
+        {
+            var result = BindExpressionInternal(syntax);
+
+            if (!canBeVoid && result.Type == TypeSymbol.Void)
+            {
+                _diagnostics.ReportExpressionMustHaveValue(syntax.Span);
+                return new BoundErrorExpression();
+            }
+
+            return result;
+        }
+
+        public BoundExpression BindExpressionInternal(ExpressionSyntax syntax)
         {
             switch (syntax.Kind)
             {
@@ -177,9 +190,50 @@ namespace Minsk.CodeAnalysis.Binding
                     return BindNameExpression((NameExpressionSyntax)syntax);
                 case SyntaxKind.AssignmentExpression:
                     return BindAssignmentExpression((AssignmentExpressionSyntax)syntax);
+                case SyntaxKind.CallExpression:
+                    return BindCallExpression((CallExpressionSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
+        {
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+            foreach (var argument in syntax.Arguments)
+            {
+                boundArguments.Add(BindExpression(argument));
+            }
+            var functions = BuiltinFunctions.GetAll();
+
+            var functionName = syntax.IdentifierToken.Text;
+            var function = functions.SingleOrDefault(f => f.Name == functionName);
+
+            if (function == null)
+            {
+                _diagnostics.ReportUndefinedFunction(syntax.IdentifierToken.Span, functionName);
+                return new BoundErrorExpression();
+            }
+
+            if (syntax.Arguments.Count != function.Parameter.Length)
+            {
+                _diagnostics.ReportWrongArgumentCount(syntax.Span, functionName, function.Parameter.Length, syntax.Arguments.Count);
+                return new BoundErrorExpression();
+            }
+
+            for (var i = 0; i < syntax.Arguments.Count; ++i)
+            {
+                var parameter = function.Parameter[i];
+                var argument = boundArguments[i];
+
+                if (argument.Type != parameter.Type)
+                {
+                    _diagnostics.ReportWrongArgumentType(syntax.Span, parameter.Name, parameter.Type, argument.Type);
+                    return new BoundErrorExpression();
+                }
+            }
+
+            return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
 
         private BoundExpression BindParenthesisExpression(ParenthesisExpressionSyntax syntax)

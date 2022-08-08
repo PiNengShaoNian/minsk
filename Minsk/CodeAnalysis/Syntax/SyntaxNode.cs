@@ -29,6 +29,13 @@ namespace Minsk.CodeAnalysis.Syntax
                     if (child != null)
                         yield return child;
                 }
+                else if (typeof(SeparatedSyntaxList).IsAssignableFrom(property.PropertyType))
+                {
+                    var list = (SeparatedSyntaxList)property.GetValue(this);
+
+                    foreach (var child in list.GetWithSeparators())
+                        yield return child;
+                }
                 else if (typeof(IEnumerable<SyntaxNode>).IsAssignableFrom(property.PropertyType))
                 {
                     var children = (IEnumerable<SyntaxNode>)property.GetValue(this);

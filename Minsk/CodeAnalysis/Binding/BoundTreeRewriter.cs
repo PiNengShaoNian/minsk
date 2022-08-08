@@ -145,11 +145,41 @@ namespace Minsk.CodeAnalysis.Binding
                     return RewriteVariableExpression((BoundVariableExpression)node);
                 case BoundNodeKind.AssignmentExpression:
                     return RewriteAssignmentExpression((BoundAssignmentExpression)node);
+                case BoundNodeKind.CallExpression:
+                    return RewriteCallExpression((BoundCallExpression)node);
                 case BoundNodeKind.ErrorExpression:
                     return RewriteErrorExpression((BoundErrorExpression)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundExpression RewriteCallExpression(BoundCallExpression node)
+        {
+            ImmutableArray<BoundExpression>.Builder buider = null;
+
+            for (var i = 0; i < node.Arguments.Length; ++i)
+            {
+                var oldArgument = node.Arguments[i];
+                var newArgument = RewriteExpression(oldArgument);
+
+                if (newArgument != oldArgument)
+                {
+                    if (buider == null)
+                    {
+                        buider = ImmutableArray.CreateBuilder<BoundExpression>(node.Arguments.Length);
+                        for (var j = 0; j < i; ++j)
+                            buider.Add(node.Arguments[j]);
+                    }
+                }
+                if (buider != null)
+                    buider.Add(newArgument);
+            }
+
+            if (buider == null)
+                return node;
+
+            return new BoundCallExpression(node.Function, buider.MoveToImmutable());
         }
 
         protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)
