@@ -7,6 +7,7 @@ namespace Minsk.CodeAnalysis
     {
         private readonly BoundBlockStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
+        private Random _random;
 
 
         public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
@@ -107,6 +108,14 @@ namespace Minsk.CodeAnalysis
                 var message = (string)EvaluateExpression(node.Arguments[0]);
                 Console.WriteLine(message);
                 return null;
+            }
+            else if(node.Function == BuiltinFunctions.Random)
+            {
+                if(_random == null)
+                    _random = new Random();
+                
+                var max = (int)EvaluateExpression(node.Arguments[0]);
+                return _random.Next(max);
             }
             else
             {
