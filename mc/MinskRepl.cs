@@ -23,6 +23,7 @@ namespace Minsk
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
                 var isIdentifer = token.Kind == SyntaxKind.IdentifierToken;
+                var isString = token.Kind == SyntaxKind.StringToken;
 
                 if (isKeyword)
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -30,6 +31,8 @@ namespace Minsk
                     Console.ForegroundColor = ConsoleColor.Cyan;
                 else if (isIdentifer)
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
+                else if (isString)
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                 else
                     Console.ForegroundColor = ConsoleColor.DarkGray;
 
@@ -81,7 +84,7 @@ namespace Minsk
 
             if (!diagnostics.Any())
             {
-                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(result.Value);
                 Console.ResetColor();
                 _previous = compilation;
