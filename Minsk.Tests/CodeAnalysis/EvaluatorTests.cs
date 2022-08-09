@@ -181,6 +181,23 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_Variables_Can_Shadow_Functions()
+        {
+            var text = @"
+                {
+                    let print = 42
+                    [print](""test"")
+                }
+            ";
+
+            var diagnostics = @"
+                Function 'print' doesn't exist.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         private void Evaluator_BlockStatement_Reports_NoInfiniteLoop()
         {
             var text = @"
@@ -202,7 +219,7 @@ namespace Minsk.Tests.CodeAnalysis
             var text = @"[x] * 10";
 
             var diagnostics = @"
-                Variable 'x' dosn't exist.
+                Variable 'x' doesn't exist.
                 ";
 
             AssertDiagnostics(text, diagnostics);
@@ -226,7 +243,7 @@ namespace Minsk.Tests.CodeAnalysis
             var text = @"[x] = 10";
 
             var diagnostics = @"
-                Variable 'x' dosn't exist.
+                Variable 'x' doesn't exist.
                 ";
 
             AssertDiagnostics(text, diagnostics);

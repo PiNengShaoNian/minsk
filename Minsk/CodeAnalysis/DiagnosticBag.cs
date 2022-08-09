@@ -64,7 +64,7 @@ namespace Minsk.CodeAnalysis
 
         public void ReportUndefinedName(TextSpan span, string name)
         {
-            var message = $"Variable '{name}' dosn't exist.";
+            var message = $"Variable '{name}' doesn't exist.";
             Report(span, message);
         }
 
@@ -94,7 +94,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportUndefinedFunction(TextSpan span, string name)
         {
-            var message = $"Function '{name}' dosn't exist.";
+            var message = $"Function '{name}' doesn't exist.";
             Report(span, message);
         }
 
