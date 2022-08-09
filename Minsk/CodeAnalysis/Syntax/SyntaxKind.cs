@@ -55,6 +55,7 @@
         IfStatement,
         WhileStatement,
         ForStatement,
+        DoWhileStatement,
 
         //Expressions
         LiteralExpression,
@@ -64,5 +65,6 @@
         AssignmentExpression,
         NameExpression,
         CallExpression,
+        DoKeyword,
     }
 }

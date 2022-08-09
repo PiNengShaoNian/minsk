@@ -83,9 +83,18 @@ namespace Minsk.CodeAnalysis.Binding
                     return BindWhileStatement((WhileStatementSyntax)syntax);
                 case SyntaxKind.ForStatement:
                     return BindForStatement((ForStatementSyntax)syntax);
+                case SyntaxKind.DoWhileStatement:
+                    return BindDoWhileStatement((DoWhileStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
+        {
+            var body = BindStatement(syntax.Body);
+            var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
+            return new BoundDoWhileStatement(body, condition);
         }
 
         private BoundForStatement BindForStatement(ForStatementSyntax syntax)
@@ -228,15 +237,15 @@ namespace Minsk.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (syntax.Arguments.Count != function.Parameter.Length)
+            if (syntax.Arguments.Count != function.Parameters.Length)
             {
-                _diagnostics.ReportWrongArgumentCount(syntax.Span, functionName, function.Parameter.Length, syntax.Arguments.Count);
+                _diagnostics.ReportWrongArgumentCount(syntax.Span, functionName, function.Parameters.Length, syntax.Arguments.Count);
                 return new BoundErrorExpression();
             }
 
             for (var i = 0; i < syntax.Arguments.Count; ++i)
             {
-                var parameter = function.Parameter[i];
+                var parameter = function.Parameters[i];
                 var argument = boundArguments[i];
 
                 if (argument.Type != parameter.Type)

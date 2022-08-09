@@ -67,6 +67,8 @@
                     return SyntaxKind.ForKeyword;
                 case "to":
                     return SyntaxKind.ToKeyword;
+                case "do":
+                    return SyntaxKind.DoKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -137,6 +139,8 @@
                     return "~";
                 case SyntaxKind.Comma:
                     return ",";
+                case SyntaxKind.DoKeyword:
+                    return "do";
                 default:
                     return null;
             }
