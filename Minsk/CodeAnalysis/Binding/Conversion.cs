@@ -19,7 +19,7 @@ namespace Minsk.CodeAnalysis.Binding
         public bool Exists { get; }
         public bool IsIdentity { get; }
         public bool IsImplicit { get; }
-        public bool IsExplicit => Exists && !IsExplicit;
+        public bool IsExplicit => Exists && !IsImplicit;
 
         public static Conversion Classify(TypeSymbol from, TypeSymbol to)
         {

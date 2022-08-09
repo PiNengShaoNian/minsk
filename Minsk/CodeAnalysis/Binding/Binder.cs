@@ -145,10 +145,26 @@ namespace Minsk.CodeAnalysis.Binding
         private BoundVariableDeclaration BindVariableDeclaration(VariableDeclarationSyntax syntax)
         {
             var isReadOnly = syntax.Keyword.Kind == SyntaxKind.LetKeyword;
+            var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
-            var variable = BindVariable(syntax.Identifier, isReadOnly, initializer.Type);
+            var variableType = type != null ? type : initializer.Type;
+            var variable = BindVariable(syntax.Identifier, isReadOnly, variableType);
+            var convertedInitializer = BindConversion(syntax.Initializer.Span, initializer, variableType);
 
-            return new BoundVariableDeclaration(variable, initializer);
+            return new BoundVariableDeclaration(variable, convertedInitializer);
+        }
+
+        private TypeSymbol BindTypeClause(TypeClauseSyntax typeClause)
+        {
+            if (typeClause == null)
+                return null;
+
+            var typeName = typeClause.Identifier.Text;
+            var type = LookupType(typeName);
+            if (type == null)
+                _diagnostics.ReportUndefinedType(typeClause.Identifier.Span, typeName);
+
+            return type;
         }
 
         private BoundExpressionStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
@@ -217,7 +233,7 @@ namespace Minsk.CodeAnalysis.Binding
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
             if (syntax.Arguments.Count == 1 && LookupType(syntax.IdentifierToken.Text) is TypeSymbol type)
-                return BindConversion(syntax.Arguments[0], type);
+                return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
 
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
             foreach (var argument in syntax.Arguments)
@@ -254,29 +270,32 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
 
-        private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type)
+        private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)
         {
             var expression = BindExpression(syntax);
             var diagnosticSpan = syntax.Span;
-            return BindConversion(diagnosticSpan, expression, type);
+            return BindConversion(diagnosticSpan, expression, type, allowExplicit);
         }
 
-        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, TypeSymbol type)
+        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, TypeSymbol targetType, bool allowExplicit = false)
         {
-            var conversion = Conversion.Classify(expression.Type, type);
+            var conversion = Conversion.Classify(expression.Type, targetType);
 
             if (!conversion.Exists)
             {
-                if (expression.Type != TypeSymbol.Error && type != TypeSymbol.Error)
-                    _diagnostics.ReportCannotConvert(diagnosticSpan, expression.Type, type);
+                if (expression.Type != TypeSymbol.Error && targetType != TypeSymbol.Error)
+                    _diagnostics.ReportCannotConvert(diagnosticSpan, expression.Type, targetType);
 
                 return new BoundErrorExpression();
             }
 
+            if (conversion.IsExplicit && !allowExplicit)
+                _diagnostics.ReportCannotConvertImplicitly(diagnosticSpan, expression.Type, targetType);
+
             if (conversion.IsIdentity)
                 return expression;
 
-            return new BoundConversionExpression(type, expression);
+            return new BoundConversionExpression(targetType, expression);
         }
 
         private BoundExpression BindParenthesisExpression(ParenthesisExpressionSyntax syntax)

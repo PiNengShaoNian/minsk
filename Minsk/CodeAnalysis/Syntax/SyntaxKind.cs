@@ -32,6 +32,7 @@
         HatToken,
         StringToken,
         Comma,
+        ColonToken,
 
         //Keyword
         TrueKeyword,
@@ -47,6 +48,7 @@
         //Nodes
         CompilationUnit,
         ElseClause,
+        TypeClause,
 
         //Statements
         BlockStatement,

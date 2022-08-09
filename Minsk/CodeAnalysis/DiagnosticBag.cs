@@ -115,5 +115,17 @@ namespace Minsk.CodeAnalysis
             var message = "Expression must have a value.";
             Report(span, message);
         }
+
+        internal void ReportUndefinedType(TextSpan span, string typeName)
+        {
+            var message = $"Type '{typeName}' doesn't exist.";
+            Report(span, message);
+        }
+
+        internal void ReportCannotConvertImplicitly(TextSpan diagnosticSpan, TypeSymbol fromType, TypeSymbol toType)
+        {
+            var message = $"Cannot convert type '{fromType}' to '{toType}'. An explicit conversion exists (are you missing a cast?)";
+            Report(diagnosticSpan, message);
+        }
     }
 }

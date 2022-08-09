@@ -141,6 +141,8 @@
                     return ",";
                 case SyntaxKind.DoKeyword:
                     return "do";
+                case SyntaxKind.ColonToken:
+                    return ":";
                 default:
                     return null;
             }
