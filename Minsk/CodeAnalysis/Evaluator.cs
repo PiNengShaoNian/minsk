@@ -17,6 +17,7 @@ namespace Minsk.CodeAnalysis
             _functionBodies = functionBodies;
             _root = root;
             _globals = variables;
+            _locals.Push(new Dictionary<VariableSymbol, object>());
         }
 
         public object Evaluate()
