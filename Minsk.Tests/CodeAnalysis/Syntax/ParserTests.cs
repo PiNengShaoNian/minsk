@@ -7,7 +7,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         private static ExpressionSyntax ParseExpression(string text)
         {
             SyntaxTree syntaxTree = SyntaxTree.Parse(text);
-            var statement = syntaxTree.Root.Statement;
+            var statement = syntaxTree.Root.Members.OfType<GlobalStatementSyntax>().Single().Statement;
             return Assert.IsType<ExpressionStatementSyntax>(statement).Expression;
         }
 

@@ -68,6 +68,18 @@ namespace Minsk.CodeAnalysis
             Report(span, message);
         }
 
+        internal void ReportSymoblAlreadyDeclared(TextSpan span, string parameterName)
+        {
+            var message = $"'{parameterName}' is already declared.";
+            Report(span, message);
+        }
+
+        internal void ReportParameterAlreadyDeclared(TextSpan span, string parameterName)
+        {
+            var message = $"A parameter with the name '{parameterName}' is already exists.";
+            Report(span, message);
+        }
+
         internal void ReportCannotConvert(TextSpan span, TypeSymbol fromType, TypeSymbol toType)
         {
             var message = $"Cannot convert type '{fromType}' to '{toType}'.";
@@ -126,6 +138,12 @@ namespace Minsk.CodeAnalysis
         {
             var message = $"Cannot convert type '{fromType}' to '{toType}'. An explicit conversion exists (are you missing a cast?)";
             Report(diagnosticSpan, message);
+        }
+
+        internal void XXX_ReportFunctionsAreUnsupported(TextSpan span)
+        {
+            var message = "Functions with return values are unsupported.";
+            Report(span, message);
         }
     }
 }

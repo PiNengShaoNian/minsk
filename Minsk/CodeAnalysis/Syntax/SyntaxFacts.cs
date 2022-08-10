@@ -69,6 +69,8 @@
                     return SyntaxKind.ToKeyword;
                 case "do":
                     return SyntaxKind.DoKeyword;
+                case "function":
+                    return SyntaxKind.FunctionKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -133,6 +135,8 @@
                     return "for";
                 case SyntaxKind.ToKeyword:
                     return "to";
+                case SyntaxKind.FunctionKeyword:
+                    return "function";
                 case SyntaxKind.HatToken:
                     return "^";
                 case SyntaxKind.TildeToken:

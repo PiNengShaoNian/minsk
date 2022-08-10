@@ -18,7 +18,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         public bool TryDeclareFunction(FunctionSymbol function) => TryDeclareSymbol(function);
 
-        public bool TryDeclareSymbol(Symbol symbol)
+        private bool TryDeclareSymbol(Symbol symbol)
         {
             if (_symbols == null)
                 _symbols = new Dictionary<string, Symbol>();
@@ -35,7 +35,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         public bool TryLookupFunction(string name, out FunctionSymbol function) => TryLookupSymbol(name, out function);
 
-        public bool TryLookupSymbol<TSymbol>(string name, out TSymbol symbol) where TSymbol : Symbol
+        private bool TryLookupSymbol<TSymbol>(string name, out TSymbol symbol) where TSymbol : Symbol
         {
             symbol = null;
             if (_symbols != null && _symbols.TryGetValue(name, out var declaredSymbol))

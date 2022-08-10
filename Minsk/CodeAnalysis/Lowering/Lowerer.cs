@@ -183,7 +183,7 @@ namespace Minsk.CodeAnalysis.Lowering
 
             var lowerBoundVariableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
             var lowerBoundVariableExpression = new BoundVariableExpression(node.Variable);
-            var upperBoundVarialbe = new VariableSymbol("uppderBound", true, TypeSymbol.Int);
+            var upperBoundVarialbe = new LocalVariableSymbol("uppderBound", true, TypeSymbol.Int);
             var upperBoundVarialbeDeclaration = new BoundVariableDeclaration(upperBoundVarialbe, node.UpperBound);
             var condition = new BoundBinaryExpression(
                     lowerBoundVariableExpression,

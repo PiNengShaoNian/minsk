@@ -44,11 +44,15 @@
         WhileKeyword,
         ForKeyword,
         ToKeyword,
+        FunctionKeyword,
 
         //Nodes
         CompilationUnit,
         ElseClause,
         TypeClause,
+        GlobalStatement,
+        FunctionDeclaration,
+        Parameter,
 
         //Statements
         BlockStatement,
