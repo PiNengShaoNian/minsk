@@ -94,7 +94,7 @@ namespace Minsk
             }
             else
             {
-                foreach (var diagnostic in diagnostics)
+                foreach (var diagnostic in diagnostics.OrderBy(diag => diag.Span, new TextSpanComparer()))
                 {
                     var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
                     TextLine line = syntaxTree.Text.Lines[lineIndex];
