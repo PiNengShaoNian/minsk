@@ -228,7 +228,9 @@ namespace Minsk
 
         private void HandleEscape(ObservableCollection<string> document, SubmissionView view)
         {
-            document[view.CurrentLine] = String.Empty;
+            document.Clear();
+            document.Add(string.Empty);
+            view.CurrentLine = 0;
             view.CurrentCharacter = 0;
         }
 
@@ -248,7 +250,6 @@ namespace Minsk
         private void HandleControlEnter(ObservableCollection<string> document, SubmissionView view)
         {
             InsertLine(document, view);
-            _done = true;
         }
 
         private static void InsertLine(ObservableCollection<string> document, SubmissionView view)
