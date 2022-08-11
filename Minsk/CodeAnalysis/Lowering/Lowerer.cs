@@ -11,7 +11,7 @@ namespace Minsk.CodeAnalysis.Lowering
 
         private BoundLabel GenerateLabel()
         {
-            var name = $"Label{_labelCount}";
+            var name = $"Label_{_labelCount}";
 
             ++_labelCount;
             return new BoundLabel(name);

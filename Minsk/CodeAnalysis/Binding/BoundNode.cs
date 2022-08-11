@@ -6,149 +6,149 @@ namespace Minsk.CodeAnalysis.Binding
     {
         public abstract BoundNodeKind Kind { get; }
 
-        public IEnumerable<BoundNode> GetChildren()
-        {
-            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        //public IEnumerable<BoundNode> GetChildren()
+        //{
+        //    var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            foreach (var property in properties)
-            {
-                if (typeof(BoundNode).IsAssignableFrom(property.PropertyType))
-                {
-                    var child = (BoundNode)property.GetValue(this);
-                    if (child != null)
-                        yield return child;
-                }
-                else if (typeof(IEnumerable<BoundNode>).IsAssignableFrom(property.PropertyType))
-                {
-                    var children = (IEnumerable<BoundNode>)property.GetValue(this);
+        //    foreach (var property in properties)
+        //    {
+        //        if (typeof(BoundNode).IsAssignableFrom(property.PropertyType))
+        //        {
+        //            var child = (BoundNode)property.GetValue(this);
+        //            if (child != null)
+        //                yield return child;
+        //        }
+        //        else if (typeof(IEnumerable<BoundNode>).IsAssignableFrom(property.PropertyType))
+        //        {
+        //            var children = (IEnumerable<BoundNode>)property.GetValue(this);
 
-                    foreach (var child in children)
-                    {
-                        if (child != null)
-                            yield return child;
-                    }
-                }
-            }
-        }
+        //            foreach (var child in children)
+        //            {
+        //                if (child != null)
+        //                    yield return child;
+        //            }
+        //        }
+        //    }
+        //}
 
-        private IEnumerable<(string Name, object Value)> GetProperties()
-        {
-            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        //private IEnumerable<(string Name, object Value)> GetProperties()
+        //{
+        //    var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            foreach (var property in properties)
-            {
-                if (property.Name == nameof(Kind) ||
-                    property.Name == nameof(BoundBinaryExpression.Op))
-                    continue;
+        //    foreach (var property in properties)
+        //    {
+        //        if (property.Name == nameof(Kind) ||
+        //            property.Name == nameof(BoundBinaryExpression.Op))
+        //            continue;
 
-                if (
-                    typeof(BoundNode).IsAssignableFrom(property.PropertyType) ||
-                    typeof(IEnumerable<BoundNode>).IsAssignableFrom(property.PropertyType)
-                    )
-                    continue;
+        //        if (
+        //            typeof(BoundNode).IsAssignableFrom(property.PropertyType) ||
+        //            typeof(IEnumerable<BoundNode>).IsAssignableFrom(property.PropertyType)
+        //            )
+        //            continue;
 
-                var value = property.GetValue(this);
-                if (value != null)
-                {
-                    yield return (property.Name, value);
-                }
-            }
-        }
+        //        var value = property.GetValue(this);
+        //        if (value != null)
+        //        {
+        //            yield return (property.Name, value);
+        //        }
+        //    }
+        //}
 
-        public void WriteTo(TextWriter writer)
-        {
-            PrettyPrint(writer, this);
-        }
+        //public void WriteTo(TextWriter writer)
+        //{
+        //    PrettyPrint(writer, this);
+        //}
 
-        private static void PrettyPrint(TextWriter writer, BoundNode node, string indent = "", bool isLast = false)
-        {
-            var isToConsole = writer == Console.Out;
-            var marker = isLast ? "└──" : "├──";
+        //private static void PrettyPrint(TextWriter writer, BoundNode node, string indent = "", bool isLast = false)
+        //{
+        //    var isToConsole = writer == Console.Out;
+        //    var marker = isLast ? "└──" : "├──";
 
-            if (isToConsole)
-                Console.ForegroundColor = ConsoleColor.DarkGray;
+        //    if (isToConsole)
+        //        Console.ForegroundColor = ConsoleColor.DarkGray;
 
-            writer.Write(indent);
-            writer.Write(marker);
-            writer.Write(" ");
+        //    writer.Write(indent);
+        //    writer.Write(marker);
+        //    writer.Write(" ");
 
-            if (isToConsole)
-                Console.ForegroundColor = GetColor(node);
+        //    if (isToConsole)
+        //        Console.ForegroundColor = GetColor(node);
 
-            var text = GetText(node);
-            Console.Write(text);
-            var isFirstProperty = true;
-            foreach (var property in node.GetProperties())
-            {
-                if (isFirstProperty)
-                    isFirstProperty = false;
-                else
-                {
-                    if (isToConsole)
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
+        //    var text = GetText(node);
+        //    Console.Write(text);
+        //    var isFirstProperty = true;
+        //    foreach (var property in node.GetProperties())
+        //    {
+        //        if (isFirstProperty)
+        //            isFirstProperty = false;
+        //        else
+        //        {
+        //            if (isToConsole)
+        //                Console.ForegroundColor = ConsoleColor.DarkGray;
 
-                    writer.Write(", ");
-                }
+        //            writer.Write(", ");
+        //        }
 
-                Console.Write(" ");
+        //        Console.Write(" ");
 
-                if (isToConsole)
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+        //        if (isToConsole)
+        //            Console.ForegroundColor = ConsoleColor.Yellow;
 
-                writer.Write(property.Name);
+        //        writer.Write(property.Name);
 
-                if (isToConsole)
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+        //        if (isToConsole)
+        //            Console.ForegroundColor = ConsoleColor.DarkGray;
 
-                writer.Write(" = ");
+        //        writer.Write(" = ");
 
-                if (isToConsole)
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                writer.Write(property.Value);
-            }
+        //        if (isToConsole)
+        //            Console.ForegroundColor = ConsoleColor.DarkYellow;
+        //        writer.Write(property.Value);
+        //    }
 
-            if (isToConsole)
-                Console.ResetColor();
+        //    if (isToConsole)
+        //        Console.ResetColor();
 
-            writer.WriteLine();
+        //    writer.WriteLine();
 
-            indent += isLast ? "   " : "│   ";
+        //    indent += isLast ? "   " : "│   ";
 
-            var lastChild = node.GetChildren().LastOrDefault();
+        //    var lastChild = node.GetChildren().LastOrDefault();
 
-            foreach (var child in node.GetChildren())
-            {
-                PrettyPrint(writer, child, indent, child == lastChild);
-            }
-        }
+        //    foreach (var child in node.GetChildren())
+        //    {
+        //        PrettyPrint(writer, child, indent, child == lastChild);
+        //    }
+        //}
 
-        private static string GetText(BoundNode node)
-        {
-            if (node is BoundBinaryExpression b)
-                return b.Op.Kind.ToString() + "Expression";
+        //private static string GetText(BoundNode node)
+        //{
+        //    if (node is BoundBinaryExpression b)
+        //        return b.Op.Kind.ToString() + "Expression";
 
-            if (node is BoundUnaryExpression u)
-                return u.Op.Kind.ToString() + "Expression";
+        //    if (node is BoundUnaryExpression u)
+        //        return u.Op.Kind.ToString() + "Expression";
 
-            return node.Kind.ToString();
-        }
+        //    return node.Kind.ToString();
+        //}
 
-        private static ConsoleColor GetColor(BoundNode node)
-        {
-            if (node is BoundExpression)
-                return ConsoleColor.Blue;
+        //private static ConsoleColor GetColor(BoundNode node)
+        //{
+        //    if (node is BoundExpression)
+        //        return ConsoleColor.Blue;
 
-            if (node is BoundStatement)
-                return ConsoleColor.Cyan;
+        //    if (node is BoundStatement)
+        //        return ConsoleColor.Cyan;
 
-            return ConsoleColor.Yellow;
-        }
+        //    return ConsoleColor.Yellow;
+        //}
 
         public override string ToString()
         {
             using (var writer = new StringWriter())
             {
-                WriteTo(writer);
+                this.WriteTo(writer);
                 return writer.ToString();
             }
         }
