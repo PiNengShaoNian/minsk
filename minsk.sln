@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mc", "mc\mc.csproj", "{EAA44A90-3569-4C27-AC0C-D8EE558413F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mi", "mi\mi.csproj", "{EAA44A90-3569-4C27-AC0C-D8EE558413F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minsk", "Minsk\Minsk.csproj", "{4E4D1F55-E739-44A9-A619-728912CA8B20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minsk", "Minsk\Minsk.csproj", "{4E4D1F55-E739-44A9-A619-728912CA8B20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minsk.Tests", "Minsk.Tests\Minsk.Tests.csproj", "{AE723815-784C-40C7-BF27-BFD95EC04296}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minsk.Tests", "Minsk.Tests\Minsk.Tests.csproj", "{AE723815-784C-40C7-BF27-BFD95EC04296}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
