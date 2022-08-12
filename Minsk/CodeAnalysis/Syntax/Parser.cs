@@ -78,9 +78,9 @@ namespace Minsk.CodeAnalysis.Syntax
             {
                 var parameter = ParseParameter();
                 nodesAndSeparators.Add(parameter);
-                if (Current.Kind == SyntaxKind.Comma)
+                if (Current.Kind == SyntaxKind.CommaToken)
                 {
-                    var comma = MatchToken(SyntaxKind.Comma);
+                    var comma = MatchToken(SyntaxKind.CommaToken);
                     nodesAndSeparators.Add(comma);
                 }
                 else
@@ -116,9 +116,25 @@ namespace Minsk.CodeAnalysis.Syntax
                     return ParseForStatement();
                 case SyntaxKind.DoKeyword:
                     return ParseDoWhileStatement();
+                case SyntaxKind.BreakKeyword:
+                    return ParseBreakStatement();
+                case SyntaxKind.ContinueKeyword:
+                    return ParseContinueStatement();
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private StatementSyntax ParseBreakStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.BreakKeyword);
+            return new BreakStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseContinueStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
+            return new ContinueStatementSyntax(keyword);
         }
 
         private StatementSyntax ParseDoWhileStatement()
@@ -417,9 +433,9 @@ namespace Minsk.CodeAnalysis.Syntax
             {
                 var expression = ParseExpression();
                 nodesAndSeparators.Add(expression);
-                if (Current.Kind == SyntaxKind.Comma)
+                if (Current.Kind == SyntaxKind.CommaToken)
                 {
-                    var comma = MatchToken(SyntaxKind.Comma);
+                    var comma = MatchToken(SyntaxKind.CommaToken);
                     nodesAndSeparators.Add(comma);
                 }
                 else

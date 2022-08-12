@@ -31,7 +31,7 @@
         TildeToken,
         HatToken,
         StringToken,
-        Comma,
+        CommaToken,
         ColonToken,
 
         //Keyword
@@ -45,6 +45,9 @@
         ForKeyword,
         ToKeyword,
         FunctionKeyword,
+        DoKeyword,
+        ContinueKeyword,
+        BreakKeyword,
 
         //Nodes
         CompilationUnit,
@@ -62,6 +65,8 @@
         WhileStatement,
         ForStatement,
         DoWhileStatement,
+        ContinueStatement,
+        BreakStatement,
 
         //Expressions
         LiteralExpression,
@@ -71,6 +76,5 @@
         AssignmentExpression,
         NameExpression,
         CallExpression,
-        DoKeyword,
     }
 }

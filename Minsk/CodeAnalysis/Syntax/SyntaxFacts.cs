@@ -49,6 +49,10 @@
         {
             switch (text)
             {
+                case "break":
+                    return SyntaxKind.BreakKeyword;
+                case "continue":
+                    return SyntaxKind.ContinueKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
                 case "false":
@@ -109,14 +113,6 @@
                     return "!=";
                 case SyntaxKind.EqualsToken:
                     return "=";
-                case SyntaxKind.TrueKeyword:
-                    return "true";
-                case SyntaxKind.FalseKeyword:
-                    return "false";
-                case SyntaxKind.LetKeyword:
-                    return "let";
-                case SyntaxKind.VarKeyword:
-                    return "var";
                 case SyntaxKind.GreaterToken:
                     return ">";
                 case SyntaxKind.GreaterOrEqualsToken:
@@ -125,6 +121,22 @@
                     return "<";
                 case SyntaxKind.LessOrEqualsToken:
                     return "<=";
+                case SyntaxKind.HatToken:
+                    return "^";
+                case SyntaxKind.TildeToken:
+                    return "~";
+                case SyntaxKind.CommaToken:
+                    return ",";
+                case SyntaxKind.ColonToken:
+                    return ":";
+                case SyntaxKind.TrueKeyword:
+                    return "true";
+                case SyntaxKind.FalseKeyword:
+                    return "false";
+                case SyntaxKind.LetKeyword:
+                    return "let";
+                case SyntaxKind.VarKeyword:
+                    return "var";
                 case SyntaxKind.IfKeyword:
                     return "if";
                 case SyntaxKind.ElseKeyword:
@@ -137,16 +149,12 @@
                     return "to";
                 case SyntaxKind.FunctionKeyword:
                     return "function";
-                case SyntaxKind.HatToken:
-                    return "^";
-                case SyntaxKind.TildeToken:
-                    return "~";
-                case SyntaxKind.Comma:
-                    return ",";
                 case SyntaxKind.DoKeyword:
                     return "do";
-                case SyntaxKind.ColonToken:
-                    return ":";
+                case SyntaxKind.BreakKeyword:
+                    return "break";
+                case SyntaxKind.ContinueKeyword:
+                    return "continue";
                 default:
                     return null;
             }

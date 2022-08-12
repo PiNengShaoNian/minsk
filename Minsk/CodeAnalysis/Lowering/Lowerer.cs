@@ -11,15 +11,12 @@ namespace Minsk.CodeAnalysis.Lowering
 
         private BoundLabel GenerateLabel()
         {
-            var name = $"Label_{_labelCount}";
-
-            ++_labelCount;
+            var name = $"Label_{++_labelCount}";
             return new BoundLabel(name);
         }
 
         private Lowerer()
         {
-
         }
 
         private static BoundBlockStatement Flatten(BoundStatement statement)
@@ -64,15 +61,23 @@ namespace Minsk.CodeAnalysis.Lowering
             // --->
             // continue:
             // <body>
-            // ifTrue <condition> goto
+            // ifTrue <condition> goto continue
+            // break: 
 
-            var continueLabel = GenerateLabel();
+            var breakLabel = node.BreakLabel;
+            var continueLabel = node.ContinueLabel;
+
             var bodyStatement = RewriteStatement(node.Body);
             var condition = RewriteExpression(node.Condition);
             var continueLabelStatement = new BoundLabelStatement(continueLabel);
             var conditionalGotoStatement = new BoundConditionalGotoStatement(continueLabel, condition, true);
+            var breakLabelStatement = new BoundLabelStatement(breakLabel);
 
-            var statements = ImmutableArray.Create(continueLabelStatement, bodyStatement, conditionalGotoStatement);
+            var statements = ImmutableArray.Create(
+                continueLabelStatement,
+                bodyStatement,
+                conditionalGotoStatement,
+                breakLabelStatement);
 
             return new BoundBlockStatement(statements);
         }
@@ -141,26 +146,27 @@ namespace Minsk.CodeAnalysis.Lowering
             // 
             // ---->
             //
-            // check:
-            // gotoFalse <condition> end
+            // continue:
+            // gotoFalse <condition> break
             // <body>
-            // goto check
-            // end:
+            // goto continue
+            // break:
 
-            var checkLabel = GenerateLabel();
-            var endLabel = GenerateLabel();
-            var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoFalseStatement = new BoundConditionalGotoStatement(endLabel, node.Condition, false);
-            var gotoCheckStatement = new BoundGotoStatement(checkLabel);
-            var endLabelStatement = new BoundLabelStatement(endLabel);
+            var continueLabel = node.ContinueLabel;
+            var breakLabel = node.BreakLabel;
+
+            var continueLabelStatement = new BoundLabelStatement(continueLabel);
+            var gotoFalseStatement = new BoundConditionalGotoStatement(breakLabel, node.Condition, false);
+            var gotoContinueStatement = new BoundGotoStatement(continueLabel);
+            var breakLabelStatement = new BoundLabelStatement(breakLabel);
 
             var result = new BoundBlockStatement(
                     ImmutableArray.Create<BoundStatement>(
-                        checkLabelStatement,
+                        continueLabelStatement,
                         gotoFalseStatement,
                         node.Body,
-                        gotoCheckStatement,
-                        endLabelStatement
+                        gotoContinueStatement,
+                        breakLabelStatement
                     )
                 );
 
@@ -177,6 +183,7 @@ namespace Minsk.CodeAnalysis.Lowering
             //     while(<var> <= <upper>)
             //     {
             //         <body>
+            //         continue:                      
             //         <var> = <var> + 1
             //      }
             // }
@@ -190,6 +197,7 @@ namespace Minsk.CodeAnalysis.Lowering
                     BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, TypeSymbol.Int, TypeSymbol.Int),
                     new BoundVariableExpression(upperBoundVarialbe)
                 );
+            var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
             var increment = new BoundExpressionStatement(
                     new BoundAssignmentExpression(
                         node.Variable,
@@ -200,8 +208,11 @@ namespace Minsk.CodeAnalysis.Lowering
                         )
                     )
                 );
-            var whileBlock = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(node.Body, increment));
-            var whileStatement = new BoundWhileStatement(condition, whileBlock);
+            var whileBlock = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                node.Body,
+                continueLabelStatement,
+                increment));
+            var whileStatement = new BoundWhileStatement(condition, whileBlock, node.BreakLabel, GenerateLabel());
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
                     lowerBoundVariableDeclaration,
                     upperBoundVarialbeDeclaration,

@@ -145,5 +145,11 @@ namespace Minsk.CodeAnalysis
             var message = "Functions with return values are unsupported.";
             Report(span, message);
         }
+
+        internal void ReportInvalidBreakOrContinue(TextSpan span, string text)
+        {
+            var message = $"The keyword {text} is only be used inside of loops.";
+            Report(span, message);
+        }
     }
 }

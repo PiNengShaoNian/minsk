@@ -12,6 +12,8 @@ namespace Minsk.CodeAnalysis.Binding
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly FunctionSymbol _function;
         private BoundScope _scope;
+        private int _labelCounter;
+        private Stack<(BoundLabel breakLabel, BoundLabel continueLabel)> _loopStack = new Stack<(BoundLabel breakLabel, BoundLabel continueLabel)>();
 
         public Binder(BoundScope parent, FunctionSymbol function)
         {
@@ -162,16 +164,49 @@ namespace Minsk.CodeAnalysis.Binding
                     return BindForStatement((ForStatementSyntax)syntax);
                 case SyntaxKind.DoWhileStatement:
                     return BindDoWhileStatement((DoWhileStatementSyntax)syntax);
+                case SyntaxKind.BreakStatement:
+                    return BindBreakStatement((BreakStatementSyntax)syntax);
+                case SyntaxKind.ContinueStatement:
+                    return BindContinueStatement((ContinueStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
         }
 
+        private BoundStatement BindContinueStatement(ContinueStatementSyntax syntax)
+        {
+            if (_loopStack.Count == 0)
+            {
+                _diagnostics.ReportInvalidBreakOrContinue(syntax.Keyword.Span, syntax.Keyword.Text);
+                return BindErrorStatement();
+            }
+
+            var labels = _loopStack.Peek();
+            return new BoundGotoStatement(labels.continueLabel);
+        }
+
+        private BoundStatement BindBreakStatement(BreakStatementSyntax syntax)
+        {
+            if (_loopStack.Count == 0)
+            {
+                _diagnostics.ReportInvalidBreakOrContinue(syntax.Keyword.Span, syntax.Keyword.Text);
+                return BindErrorStatement();
+            }
+
+            var labels = _loopStack.Peek();
+            return new BoundGotoStatement(labels.breakLabel);
+        }
+
+        private BoundStatement BindErrorStatement()
+        {
+            return new BoundExpressionStatement(new BoundErrorExpression());
+        }
+
         private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
         {
-            var body = BindStatement(syntax.Body);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            return new BoundDoWhileStatement(body, condition);
+            return new BoundDoWhileStatement(body, condition, breakLabel, continueLabel);
         }
 
         private BoundForStatement BindForStatement(ForStatementSyntax syntax)
@@ -184,10 +219,10 @@ namespace Minsk.CodeAnalysis.Binding
             SyntaxToken identifier = syntax.Identifier;
             VariableSymbol variable = BindVariable(identifier, true, TypeSymbol.Int);
 
-            var body = BindStatement(syntax.Body);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
-            return new BoundForStatement(variable, lowerBound, upperBound, body);
+            return new BoundForStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
         private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol targetType)
@@ -206,9 +241,20 @@ namespace Minsk.CodeAnalysis.Binding
         private BoundWhileStatement BindWhileStatement(WhileStatementSyntax syntax)
         {
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            var body = BindStatement(syntax.Body);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
+            return new BoundWhileStatement(condition, body, breakLabel, continueLabel);
+        }
 
-            return new BoundWhileStatement(condition, body);
+        private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel breakLabel, out BoundLabel continueLabel)
+        {
+            ++_labelCounter;
+            breakLabel = new BoundLabel($"break_{_labelCounter}");
+            continueLabel = new BoundLabel($"continue_{_labelCounter}");
+
+            _loopStack.Push((breakLabel, continueLabel));
+            var boundBody = BindStatement(body);
+            _loopStack.Pop();
+            return boundBody;
         }
 
         private BoundIfStatement BindIfStatement(IfStatementSyntax syntax)

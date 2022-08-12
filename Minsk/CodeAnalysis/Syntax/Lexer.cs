@@ -92,7 +92,7 @@ namespace Minsk.CodeAnalysis.Syntax
                     ++_position;
                     break;
                 case ',':
-                    _kind = SyntaxKind.Comma;
+                    _kind = SyntaxKind.CommaToken;
                     ++_position;
                     break;
                 case '~':

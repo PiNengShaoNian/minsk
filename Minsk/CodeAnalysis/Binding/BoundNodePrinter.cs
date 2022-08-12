@@ -191,7 +191,7 @@ namespace Minsk.CodeAnalysis.Binding
             var idented = writer.Indent > 0;
             if (idented)
                 --writer.Indent;
-            writer.WriteIdentifier(node.Label.Name);
+            writer.WritePunctuation(node.Label.Name);
             writer.WritePunctuation(":");
             if (idented)
                 ++writer.Indent;
