@@ -1,5 +1,6 @@
 ﻿using Minsk.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
+using System.Reflection.Metadata;
 
 namespace Minsk.CodeAnalysis.Symbols
 {

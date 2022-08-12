@@ -44,7 +44,6 @@ namespace Minsk.CodeAnalysis.Binding
                 statements.Add(s);
             }
 
-
             var functions = binder._scope.GetDeclaredFunctions();
             var variables = binder._scope.GetDeclaredVariables();
             var diagnostics = binder.Diagnostics.ToImmutableArray();
