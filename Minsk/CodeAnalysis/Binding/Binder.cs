@@ -404,7 +404,9 @@ namespace Minsk.CodeAnalysis.Binding
 
                 if (argument.Type != parameter.Type)
                 {
-                    _diagnostics.ReportWrongArgumentType(syntax.Arguments[i].Span, parameter.Name, parameter.Type, argument.Type);
+                    if (argument.Type != TypeSymbol.Error)
+                        _diagnostics.ReportWrongArgumentType(syntax.Arguments[i].Span, parameter.Name, parameter.Type, argument.Type);
+                    
                     hasErrors = true;
                 }
             }
