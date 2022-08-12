@@ -112,7 +112,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportWrongArgumentCount(TextSpan span, string name, int expectedCount, int actualCount)
         {
-            var message = $"Function '{name}' request {expectedCount} arguments but was given {actualCount}.";
+            var message = $"Function '{name}' requires {expectedCount} arguments but was given {actualCount}.";
             Report(span, message);
         }
 
