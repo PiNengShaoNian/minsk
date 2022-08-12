@@ -61,22 +61,26 @@ namespace Minsk.CodeAnalysis.Lowering
             // --->
             // continue:
             // <body>
+            // check: 
             // ifTrue <condition> goto continue
             // break: 
 
             var breakLabel = node.BreakLabel;
-            var continueLabel = node.ContinueLabel;
+            var continueLabel = GenerateLabel();
+            var checkLabel = node.ContinueLabel;
 
             var bodyStatement = RewriteStatement(node.Body);
             var condition = RewriteExpression(node.Condition);
             var continueLabelStatement = new BoundLabelStatement(continueLabel);
-            var conditionalGotoStatement = new BoundConditionalGotoStatement(continueLabel, condition, true);
+            var checkLabelStatement = new BoundLabelStatement(checkLabel);
+            var gotoContinueStatement = new BoundConditionalGotoStatement(continueLabel, condition, true);
             var breakLabelStatement = new BoundLabelStatement(breakLabel);
 
             var statements = ImmutableArray.Create(
                 continueLabelStatement,
                 bodyStatement,
-                conditionalGotoStatement,
+                checkLabelStatement,
+                gotoContinueStatement,
                 breakLabelStatement);
 
             return new BoundBlockStatement(statements);
