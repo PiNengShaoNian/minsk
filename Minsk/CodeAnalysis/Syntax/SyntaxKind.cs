@@ -48,6 +48,7 @@
         DoKeyword,
         ContinueKeyword,
         BreakKeyword,
+        ReturnKeyword,
 
         //Nodes
         CompilationUnit,
@@ -67,6 +68,7 @@
         DoWhileStatement,
         ContinueStatement,
         BreakStatement,
+        ReturnStatement,
 
         //Expressions
         LiteralExpression,

@@ -1,8 +1,5 @@
 ﻿namespace Minsk.CodeAnalysis.Syntax
 {
-    // for i = 1 to 10
-    // {
-    // }
     public sealed class ForStatementSyntax : StatementSyntax
     {
         public ForStatementSyntax

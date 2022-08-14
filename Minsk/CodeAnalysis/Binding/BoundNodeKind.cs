@@ -13,6 +13,7 @@
         LabelStatement,
         ConditionalGotoStatement,
         DoWhileStatement,
+        ReturnStatement,
 
         //Expressions
         UnaryExpression,

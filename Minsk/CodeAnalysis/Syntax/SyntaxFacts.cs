@@ -75,6 +75,8 @@
                     return SyntaxKind.DoKeyword;
                 case "function":
                     return SyntaxKind.FunctionKeyword;
+                case "return":
+                    return SyntaxKind.ReturnKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -155,6 +157,8 @@
                     return "break";
                 case SyntaxKind.ContinueKeyword:
                     return "continue";
+                case SyntaxKind.ReturnKeyword:
+                    return "return";
                 default:
                     return null;
             }
