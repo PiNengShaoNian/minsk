@@ -49,6 +49,9 @@ namespace Minsk.CodeAnalysis.Binding
                 case BoundNodeKind.DoWhileStatement:
                     WriteDoWhileStatement((BoundDoWhileStatement)node, writer);
                     break;
+                case BoundNodeKind.ReturnStatement:
+                    WriteReturnStatement((BoundReturnStatement)node, writer);
+                    break;
                 case BoundNodeKind.UnaryExpression:
                     WriteUnaryExpression((BoundUnaryExpression)node, writer);
                     break;
@@ -76,6 +79,14 @@ namespace Minsk.CodeAnalysis.Binding
                 default:
                     throw new Exception($"Unexpected node ${node.Kind}");
             }
+        }
+
+        private static void WriteReturnStatement(BoundReturnStatement node, IndentedTextWriter writer)
+        {
+            writer.WriteKeyword("return ");
+            if (node.Expression != null)
+                node.Expression.WriteTo(writer);
+            writer.WriteLine();
         }
 
         private static void WriteNestedStatement(this IndentedTextWriter writer, BoundStatement node)

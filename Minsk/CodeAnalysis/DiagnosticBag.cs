@@ -86,6 +86,12 @@ namespace Minsk.CodeAnalysis
             Report(span, message);
         }
 
+        internal void ReportAllPathsMustReturn(TextSpan span)
+        {
+            var message = "Not all code paths return a value.";
+            Report(span, message);
+        }
+
         internal void ReportVariableAlreadyDeclared(TextSpan span, string name)
         {
             var message = $"Variable '{name}' is already declared.";
