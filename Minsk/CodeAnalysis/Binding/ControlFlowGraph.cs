@@ -1,5 +1,6 @@
 ﻿using Minsk.CodeAnalysis.Symbols;
 using Minsk.CodeAnalysis.Syntax;
+using System.CodeDom.Compiler;
 using System.Text;
 
 namespace Minsk.CodeAnalysis.Binding
@@ -45,12 +46,13 @@ namespace Minsk.CodeAnalysis.Binding
                 if (IsEnd)
                     return "<End>";
 
-                using (var stringWriter = new StringWriter())
+                using (var writer = new StringWriter())
+                using (var indentedWriter = new IndentedTextWriter(writer))
                 {
                     foreach (var statement in Statements)
-                        statement.WriteTo(stringWriter);
+                        statement.WriteTo(indentedWriter);
 
-                    return stringWriter.ToString();
+                    return writer.ToString();
                 }
             }
         }
@@ -268,7 +270,7 @@ namespace Minsk.CodeAnalysis.Binding
         {
             string Quote(string text)
             {
-                return "\"" + text.Replace("\"", "\\\"") + "\"";
+                return "\"" + text.TrimEnd().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace(Environment.NewLine, "\\l") + "\"";
             }
 
             writer.WriteLine("digraph G {");
@@ -283,7 +285,7 @@ namespace Minsk.CodeAnalysis.Binding
             foreach (var block in Blocks)
             {
                 var id = blockIds[block];
-                var label = Quote(block.ToString().Replace(Environment.NewLine, "\\l"));
+                var label = Quote(block.ToString());
                 writer.WriteLine($"    {id} [label={label} shape=box]");
             }
 
