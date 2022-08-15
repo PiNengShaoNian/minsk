@@ -62,7 +62,7 @@ namespace Minsk.CodeAnalysis
             Report(span, message);
         }
 
-        public void ReportUndefinedName(TextSpan span, string name)
+        public void ReportUndefinedVariable(TextSpan span, string name)
         {
             var message = $"Variable '{name}' doesn't exist.";
             Report(span, message);
@@ -167,6 +167,18 @@ namespace Minsk.CodeAnalysis
         internal void ReportMissingReturnExpression(TextSpan span, TypeSymbol returnType)
         {
             var message = $"An expression of type '{returnType}' is expected.";
+            Report(span, message);
+        }
+
+        public void ReportNotAVariable(TextSpan span, string name)
+        {
+            var message = $"'{name}' is not a variable.";
+            Report(span, message);
+        }
+
+        internal void ReportNotAFunction(TextSpan span, string name)
+        {
+            var message = $"'{name}' is not a function.";
             Report(span, message);
         }
     }

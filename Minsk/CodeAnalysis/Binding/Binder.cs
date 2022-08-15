@@ -244,7 +244,7 @@ namespace Minsk.CodeAnalysis.Binding
             _scope = new BoundScope(_scope);
 
             SyntaxToken identifier = syntax.Identifier;
-            VariableSymbol variable = BindVariable(identifier, true, TypeSymbol.Int);
+            VariableSymbol variable = BindVariableDeclaration(identifier, true, TypeSymbol.Int);
 
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
@@ -252,7 +252,7 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundForStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
-        private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol targetType)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol targetType)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
@@ -299,7 +299,7 @@ namespace Minsk.CodeAnalysis.Binding
             var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type != null ? type : initializer.Type;
-            var variable = BindVariable(syntax.Identifier, isReadOnly, variableType);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType);
             var convertedInitializer = BindConversion(syntax.Initializer.Span, initializer, variableType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);
@@ -393,10 +393,19 @@ namespace Minsk.CodeAnalysis.Binding
             }
 
             var functionName = syntax.IdentifierToken.Text;
+            var symbol = _scope.TryLookupSymbol(functionName);
 
-            if (!_scope.TryLookupFunction(functionName, out var function))
+            if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.IdentifierToken.Span, functionName);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+
+            if (function == null)
+            {
+                _diagnostics.ReportNotAFunction(syntax.IdentifierToken.Span, functionName);
                 return new BoundErrorExpression();
             }
 
@@ -482,12 +491,10 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
-            VariableSymbol variable;
-            if (!_scope.TryLookupVariable(name, out variable))
-            {
-                _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+
+            if (variable == null)
                 return boundExpression;
-            }
 
             if (variable.IsReadOnly)
                 _diagnostics.ReportCannotAssign(syntax.EqualsToken.Span, name);
@@ -501,20 +508,34 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var name = syntax.IdentifierToken.Text;
 
-            if (string.IsNullOrEmpty(name))
+            if (syntax.IdentifierToken.IsMissing)
             {
                 // this means the token was inserted by the parser. We already reported error so 
-                //we can just return an error expression.
+                // we can just return an error expression.
                 return new BoundErrorExpression();
             }
 
-            if (!_scope.TryLookupVariable(name, out var variable))
-            {
-                _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+            if (variable == null)
                 return new BoundErrorExpression();
-            }
 
             return new BoundVariableExpression(variable);
+        }
+
+        private VariableSymbol BindVariableReference(string name, TextSpan span)
+        {
+            switch (_scope.TryLookupSymbol(name))
+            {
+                case VariableSymbol variable:
+                    return variable;
+                case null:
+                    //_diagnostics.ReportUndefinedVariable(span, name);
+                    _diagnostics.ReportUndefinedVariable(span, name);
+                    return null;
+                default:
+                    _diagnostics.ReportNotAVariable(span, name);
+                    return null;
+            }
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
