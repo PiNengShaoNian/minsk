@@ -91,7 +91,7 @@ namespace Minsk.CodeAnalysis.Binding
                 var parameterType = BindTypeClause(parameterSyntax.Type);
                 if (!seenParameterNames.Add(parameterName))
                 {
-                    _diagnostics.ReportParameterAlreadyDeclared(parameterSyntax.Identifier.Span, parameterName);
+                    _diagnostics.ReportParameterAlreadyDeclared(parameterSyntax.Span, parameterName);
                 }
                 else
                 {

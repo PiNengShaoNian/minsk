@@ -76,7 +76,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportParameterAlreadyDeclared(TextSpan span, string parameterName)
         {
-            var message = $"A parameter with the name '{parameterName}' is already exists.";
+            var message = $"A parameter with the name '{parameterName}' already exists.";
             Report(span, message);
         }
 
@@ -124,7 +124,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportWrongArgumentType(TextSpan span, string name, TypeSymbol expectedType, TypeSymbol actualType)
         {
-            var message = $"Parameter '{name}' requires value of type '{expectedType}' but was given '{actualType}'.";
+            var message = $"Parameter '{name}' requires a value of type '{expectedType}' but was given a value of type '{actualType}'.";
             Report(span, message);
         }
 
@@ -148,7 +148,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportInvalidBreakOrContinue(TextSpan span, string text)
         {
-            var message = $"The keyword {text} is only be used inside of loops.";
+            var message = $"The keyword '{text}' can only be used inside of loops.";
             Report(span, message);
         }
 
@@ -160,7 +160,7 @@ namespace Minsk.CodeAnalysis
 
         internal void ReportInvalidReturnExpression(TextSpan span, string functionName)
         {
-            var message = $"Since the function '{functionName}' does not return a value the 'return' keyword cannot be follow by an expression.";
+            var message = $"Since the function '{functionName}' does not return a value the 'return' keyword cannot be followed by an expression.";
             Report(span, message);
         }
 
