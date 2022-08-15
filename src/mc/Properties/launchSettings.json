@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "mc": {
+      "commandName": "Project",
+      "commandLineArgs": ".\\samples\\hello\\helloworld.ms"
+    }
+  }
+}
