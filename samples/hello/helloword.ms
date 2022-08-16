@@ -1,5 +1,2 @@
-function hi(name: string) {
-    return print("Hi " + name + "!")
-}
-
-hi(34)
+let name = getName()
+print("Hello " + name + "!")

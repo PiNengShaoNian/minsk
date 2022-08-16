@@ -93,7 +93,7 @@ namespace Minsk
             }
             else
             {
-                Console.Out.WriteDiagnostics(diagnostics, syntaxTree);
+                Console.Out.WriteDiagnostics(diagnostics);
             }
         }
 
