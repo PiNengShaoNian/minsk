@@ -41,30 +41,30 @@ namespace Minsk
             }
         }
 
-        protected override void EvaluateMetaCommand(string input)
+        [MetaCommand("showTree", "Shows the parse tree")]
+        private void EvaluateShowTree()
         {
-            if (input == "#showTree")
-            {
-                _showTree = !_showTree;
-                Console.WriteLine(_showTree ? "Showing parse tree" : "Not showing parse tree");
-            }
-            else if (input == "#showProgram")
-            {
-                _showProgram = !_showProgram;
-                Console.WriteLine(_showProgram ? "Showing bound tree" : "Not showing bound tree");
-            }
-            else if (input == "#cls")
-            {
-                Console.Clear();
-            }
-            else if (input == "#reset")
-            {
-                _previous = null;
-            }
-            else
-            {
-                base.EvaluateMetaCommand(input);
-            }
+            _showTree = !_showTree;
+            Console.WriteLine(_showTree ? "Showing parse tree" : "Not showing parse tree");
+        }
+
+        [MetaCommand("showProgram", "Shows the bound tree")]
+        private void EvaluateShowProgram()
+        {
+            _showProgram = !_showProgram;
+            Console.WriteLine(_showProgram ? "Showing bound tree" : "Not showing bound tree");
+        }
+
+        [MetaCommand("cls", "Clears the screen")]
+        private void EvaluateClear()
+        {
+            Console.Clear();
+        }
+
+        [MetaCommand("reset", "Clears all previous submissions")]
+        private void EvaluateReset()
+        {
+            _previous = null;
         }
 
         protected override void EvaluateSubmission(string text)
