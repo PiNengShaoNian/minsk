@@ -3,4 +3,4 @@ function sum(n: int): int {
     else return sum(n-1) + n
 }
 
-print(string(sum(2)))
+print(string(sum(500)))
