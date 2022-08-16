@@ -3,10 +3,12 @@
     public sealed class IfStatementSyntax : StatementSyntax
     {
         public IfStatementSyntax
-           (SyntaxToken ifKeyword, ExpressionSyntax condition,
+           (
+            SyntaxTree syntaxTree,
+            SyntaxToken ifKeyword, ExpressionSyntax condition,
            StatementSyntax thenStatement,
            ElseClauseSyntax elseClause
-           )
+           ): base(syntaxTree)
         {
             IfKeyword = ifKeyword;
             Condition = condition;

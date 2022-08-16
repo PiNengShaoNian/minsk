@@ -4,6 +4,7 @@
     {
         public ForStatementSyntax
         (
+            SyntaxTree syntaxTree,
          SyntaxToken forKeyword,
          SyntaxToken identifier,
          SyntaxToken equalsToken,
@@ -11,7 +12,7 @@
          SyntaxToken toKeyword,
          ExpressionSyntax upperBound,
          StatementSyntax body
-        )
+        ): base(syntaxTree)
         {
             ForKeyword = forKeyword;
             Identifier = identifier;

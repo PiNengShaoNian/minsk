@@ -25,161 +25,161 @@ namespace Minsk.CodeAnalysis
         }
 
 
-        private void Report(TextSpan span, string message)
+        private void Report(TextLocation location, string message)
         {
-            var diagnostic = new Diagnostic(span, message);
+            var diagnostic = new Diagnostic(location, message);
             _diagnostics.Add(diagnostic);
         }
 
-        public void ReportInvalidNumber(TextSpan textSpan, string text, TypeSymbol type)
+        public void ReportInvalidNumber(TextLocation location, string text, TypeSymbol type)
         {
             var message = $"The number {text} isn't valid {type}.";
-            Report(textSpan, message);
+            Report(location, message);
         }
 
 
-        public void ReportBadCharacter(int position, char current)
+        public void ReportBadCharacter(TextLocation location, char current)
         {
             var message = $"bad character input: '{current}'.";
-            Report(new TextSpan(position, 1), message);
+            Report(location, message);
         }
 
-        public void ReportUnexpectedToken(TextSpan span, SyntaxKind actualKind, SyntaxKind expectedKind)
+        public void ReportUnexpectedToken(TextLocation location, SyntaxKind actualKind, SyntaxKind expectedKind)
         {
             var message = $"Unexpected token <{actualKind}>, expected <{expectedKind}>.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportUndefinedBinaryOperator(TextSpan span, string operatorText, TypeSymbol leftType, TypeSymbol rightType)
+        internal void ReportUndefinedBinaryOperator(TextLocation location, string operatorText, TypeSymbol leftType, TypeSymbol rightType)
         {
             var message = $"binary operator '{operatorText}' is not defined for types {leftType} and {rightType}.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportUndefinedUnaryOperator(TextSpan span, string opText, TypeSymbol operandType)
+        internal void ReportUndefinedUnaryOperator(TextLocation location, string opText, TypeSymbol operandType)
         {
             var message = $"Unary operator '{opText}' is not defined for type {operandType}.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        public void ReportUndefinedVariable(TextSpan span, string name)
+        public void ReportUndefinedVariable(TextLocation location, string name)
         {
             var message = $"Variable '{name}' doesn't exist.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportSymoblAlreadyDeclared(TextSpan span, string parameterName)
+        internal void ReportSymbolAlreadyDeclared(TextLocation location, string parameterName)
         {
             var message = $"'{parameterName}' is already declared.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportParameterAlreadyDeclared(TextSpan span, string parameterName)
+        internal void ReportParameterAlreadyDeclared(TextLocation location, string parameterName)
         {
             var message = $"A parameter with the name '{parameterName}' already exists.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportCannotConvert(TextSpan span, TypeSymbol fromType, TypeSymbol toType)
+        internal void ReportCannotConvert(TextLocation location, TypeSymbol fromType, TypeSymbol toType)
         {
             var message = $"Cannot convert type '{fromType}' to '{toType}'.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportAllPathsMustReturn(TextSpan span)
+        internal void ReportAllPathsMustReturn(TextLocation location)
         {
             var message = "Not all code paths return a value.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportVariableAlreadyDeclared(TextSpan span, string name)
+        internal void ReportVariableAlreadyDeclared(TextLocation location, string name)
         {
             var message = $"Variable '{name}' is already declared.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportCannotAssign(TextSpan span, string name)
+        internal void ReportCannotAssign(TextLocation location, string name)
         {
             var message = $"Variable '{name}' is read-only and cannot be assigned to.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        public void ReportUnterminatedString(TextSpan span)
+        public void ReportUnterminatedString(TextLocation location)
         {
             var message = $"Unterminated string literal.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportUndefinedFunction(TextSpan span, string name)
+        internal void ReportUndefinedFunction(TextLocation location, string name)
         {
             var message = $"Function '{name}' doesn't exist.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportWrongArgumentCount(TextSpan span, string name, int expectedCount, int actualCount)
+        internal void ReportWrongArgumentCount(TextLocation location, string name, int expectedCount, int actualCount)
         {
             var message = $"Function '{name}' requires {expectedCount} arguments but was given {actualCount}.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportWrongArgumentType(TextSpan span, string name, TypeSymbol expectedType, TypeSymbol actualType)
+        internal void ReportWrongArgumentType(TextLocation location, string name, TypeSymbol expectedType, TypeSymbol actualType)
         {
             var message = $"Parameter '{name}' requires a value of type '{expectedType}' but was given a value of type '{actualType}'.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportExpressionMustHaveValue(TextSpan span)
+        internal void ReportExpressionMustHaveValue(TextLocation location)
         {
             var message = "Expression must have a value.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportUndefinedType(TextSpan span, string typeName)
+        internal void ReportUndefinedType(TextLocation location, string typeName)
         {
             var message = $"Type '{typeName}' doesn't exist.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportCannotConvertImplicitly(TextSpan diagnosticSpan, TypeSymbol fromType, TypeSymbol toType)
+        internal void ReportCannotConvertImplicitly(TextLocation location, TypeSymbol fromType, TypeSymbol toType)
         {
             var message = $"Cannot convert type '{fromType}' to '{toType}'. An explicit conversion exists (are you missing a cast?)";
-            Report(diagnosticSpan, message);
+            Report(location, message);
         }
 
-        internal void ReportInvalidBreakOrContinue(TextSpan span, string text)
+        internal void ReportInvalidBreakOrContinue(TextLocation location, string text)
         {
             var message = $"The keyword '{text}' can only be used inside of loops.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportInvalidReturn(TextSpan span)
+        internal void ReportInvalidReturn(TextLocation location)
         {
             var message = "The 'return' keyword can only be used inside of functions.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportInvalidReturnExpression(TextSpan span, string functionName)
+        internal void ReportInvalidReturnExpression(TextLocation location, string functionName)
         {
             var message = $"Since the function '{functionName}' does not return a value the 'return' keyword cannot be followed by an expression.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportMissingReturnExpression(TextSpan span, TypeSymbol returnType)
+        internal void ReportMissingReturnExpression(TextLocation location, TypeSymbol returnType)
         {
             var message = $"An expression of type '{returnType}' is expected.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        public void ReportNotAVariable(TextSpan span, string name)
+        public void ReportNotAVariable(TextLocation location, string name)
         {
             var message = $"'{name}' is not a variable.";
-            Report(span, message);
+            Report(location, message);
         }
 
-        internal void ReportNotAFunction(TextSpan span, string name)
+        internal void ReportNotAFunction(TextLocation location, string name)
         {
             var message = $"'{name}' is not a function.";
-            Report(span, message);
+            Report(location, message);
         }
     }
 }

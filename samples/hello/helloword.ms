@@ -1,2 +1,5 @@
-let name = input()
-print("Hello " + name)
+function hi(name: string) {
+    return print("Hi " + name + "!")
+}
+
+hi(34)

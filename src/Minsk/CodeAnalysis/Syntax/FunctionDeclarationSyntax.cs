@@ -3,6 +3,7 @@
     public sealed class FunctionDeclarationSyntax : MemberSyntax
     {
         public FunctionDeclarationSyntax(
+            SyntaxTree syntaxTree,
             SyntaxToken functionKeyWord,
             SyntaxToken identifier,
             SyntaxToken openParenthesisToken,
@@ -10,7 +11,7 @@
             SyntaxToken closeParenthesisToken,
             TypeClauseSyntax type,
             BlockStatementSyntax body
-        )
+        ): base(syntaxTree)
         {
             FunctionKeyWord = functionKeyWord;
             Identifier = identifier;

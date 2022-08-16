@@ -5,7 +5,14 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     public abstract class SyntaxNode
     {
+        protected SyntaxNode(SyntaxTree syntaxTree)
+        {
+            SyntaxTree = syntaxTree;
+        }
+
         public abstract SyntaxKind Kind { get; }
+        public SyntaxTree SyntaxTree { get; }
+
 
         public virtual TextSpan Span
         {
@@ -16,6 +23,9 @@ namespace Minsk.CodeAnalysis.Syntax
                 return TextSpan.FromBounds(first.Start, last.End);
             }
         }
+
+        public TextLocation Location => new TextLocation(SyntaxTree.Text, Span);
+
 
         public IEnumerable<SyntaxNode> GetChildren()
         {
