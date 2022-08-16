@@ -2,7 +2,8 @@
   "profiles": {
     "mc": {
       "commandName": "Project",
-      "commandLineArgs": ".\\samples\\hello\\helloworld.ms"
+      "commandLineArgs": ".\\samples\\hello\\",
+      "workingDirectory": "D:\\Code\\ToJustice\\minsk"
     }
   }
 }

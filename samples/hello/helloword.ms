@@ -1,2 +1,6 @@
-let name = getName()
-print("Hello " + name + "!")
+function sum(n: int): int {
+    if(n == 0) return n
+    else return sum(n-1) + n
+}
+
+print(string(sum(2)))
