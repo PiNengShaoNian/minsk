@@ -11,6 +11,7 @@ namespace Minsk
     {
         private Compilation _previous;
         private static bool _loadingSubmission;
+        private static readonly Compilation emptyCompilation = new Compilation();
         private bool _showTree;
         private bool _showProgram;
         private Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
@@ -95,7 +96,7 @@ namespace Minsk
         [MetaCommand("ls", "Lists all symbols")]
         private void EvaluateLs()
         {
-            var compilation = _previous ?? new Compilation();
+            var compilation = _previous ?? emptyCompilation;
 
             var symbols = compilation.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
 
@@ -108,7 +109,7 @@ namespace Minsk
         [MetaCommand("dump", "Shows bound tree of given function")]
         private void EvaluateDump(string functionName)
         {
-            var compilation = _previous ?? new Compilation();
+            var compilation = _previous ?? emptyCompilation;
 
             var function = compilation.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
 
