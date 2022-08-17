@@ -116,10 +116,11 @@ namespace Minsk.CodeAnalysis
         public void EmitTree(FunctionSymbol function, TextWriter writer)
         {
             var program = Binder.BindProgram(GlobalScope);
-            if (!program.Functions.TryGetValue(function, out var body))
-                return;
 
             function.WriteTo(writer);
+
+            if (!program.Functions.TryGetValue(function, out var body))
+                return;
             body.WriteTo(writer);
         }
     }

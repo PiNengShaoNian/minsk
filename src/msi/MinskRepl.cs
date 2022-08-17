@@ -95,9 +95,9 @@ namespace Minsk
         [MetaCommand("ls", "Lists all symbols")]
         private void EvaluateLs()
         {
-            if (_previous == null) return;
+            var compilation = _previous ?? new Compilation();
 
-            var symbols = _previous.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
+            var symbols = compilation.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
 
             foreach (var symbol in symbols)
             {
@@ -108,9 +108,9 @@ namespace Minsk
         [MetaCommand("dump", "Shows bound tree of given function")]
         private void EvaluateDump(string functionName)
         {
-            if (_previous == null) return;
+            var compilation = _previous ?? new Compilation();
 
-            var function = _previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
+            var function = compilation.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
 
             if (function == null)
             {
@@ -120,7 +120,7 @@ namespace Minsk
                 return;
             }
 
-            _previous.EmitTree(function, Console.Out);
+            compilation.EmitTree(function, Console.Out);
         }
 
         protected override void EvaluateSubmission(string text)
