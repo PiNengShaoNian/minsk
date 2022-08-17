@@ -8,6 +8,7 @@ namespace Minsk.CodeAnalysis
     {
         private readonly BoundProgram _program;
         private readonly Dictionary<VariableSymbol, object> _globals;
+        private readonly Dictionary<FunctionSymbol, BoundBlockStatement> _funtions = new Dictionary<FunctionSymbol, BoundBlockStatement>();
         private readonly Stack<Dictionary<VariableSymbol, object>> _locals = new Stack<Dictionary<VariableSymbol, object>>();
         private Random _random;
 
@@ -16,6 +17,14 @@ namespace Minsk.CodeAnalysis
             _program = program;
             _globals = variables;
             _locals.Push(new Dictionary<VariableSymbol, object>());
+            var current = program;
+            while (current != null)
+            {
+                foreach (var (function, body) in current.Functions)
+                    _funtions.Add(function, body);
+
+                current = current.Previous;
+            }
         }
 
         public object Evaluate()
@@ -154,7 +163,7 @@ namespace Minsk.CodeAnalysis
                 }
 
                 _locals.Push(locals);
-                var statement = _program.Functions[node.Function];
+                var statement = _funtions[node.Function];
 
                 var result = EvaluateStatement(statement);
 
