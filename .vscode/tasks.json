@@ -12,13 +12,13 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "mc",
+            "label": "msc",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "run",
                 "--project",
-                "${workspaceFolder}/src/mc/mc.csproj",
+                "${workspaceFolder}/src/msc/msc.csproj",
                 "--",
                 "${fileDirname}"
             ],
