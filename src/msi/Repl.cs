@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Minsk.CodeAnalysis;
+using Minsk.IO;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Reflection;
@@ -556,7 +557,11 @@ namespace Minsk
             foreach (var metaCommand in _metaCommands.OrderBy(m => m.Name))
             {
                 var paddedName = metaCommand.Name.PadRight(maxNameLength);
-                Console.WriteLine($"#{paddedName}  {metaCommand.Description}");
+
+                Console.Out.WritePunctuation("#");
+                Console.Out.WriteIdentifier(paddedName + "   ");
+                Console.Out.WritePunctuation(metaCommand.Description);
+                Console.Out.WriteLine();
             }
         }
     }
