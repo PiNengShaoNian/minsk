@@ -507,7 +507,7 @@ namespace Minsk
 
             if (args.Count != parameters.Length)
             {
-                var parameterNames = String.Join(", ", parameters.Select(p => $"<{p.Name}>"));
+                var parameterNames = String.Join(" ", parameters.Select(p => $"<{p.Name}>"));
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"error: invalid number of arguments (given {args.Count}, expected {parameters.Length}).");
                 Console.WriteLine($"usage: #{commandName} {parameterNames}");
