@@ -3,4 +3,4 @@ function sum(n: int): int {
     else return sum(n-1) + n
 }
 
-print(string(2))
+print(sum(3))
