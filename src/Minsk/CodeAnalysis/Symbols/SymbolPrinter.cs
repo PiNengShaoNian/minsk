@@ -43,7 +43,13 @@ namespace Minsk.CodeAnalysis.Symbols
 
                 p.WriteTo(writer);
             }
+
             writer.WritePunctuation(")");
+            if (symbol.Type != TypeSymbol.Void)
+            {
+                writer.WritePunctuation(" : ");
+                symbol.Type.WriteTo(writer);
+            }
             writer.WriteLine();
         }
 
@@ -65,6 +71,7 @@ namespace Minsk.CodeAnalysis.Symbols
             writer.WriteIdentifier(symbol.Name);
             writer.WritePunctuation(": ");
             symbol.Type.WriteTo(writer);
+            writer.WriteLine();
         }
 
         private static void WriteLocalVariableTo(LocalVariableSymbol symbol, TextWriter writer)
@@ -73,6 +80,7 @@ namespace Minsk.CodeAnalysis.Symbols
             writer.WriteIdentifier(symbol.Name);
             writer.WritePunctuation(": ");
             symbol.Type.WriteTo(writer);
+            writer.WriteLine();
         }
     }
 }

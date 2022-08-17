@@ -12,9 +12,6 @@ namespace Minsk.CodeAnalysis.Syntax
         private SyntaxTree(SourceText text, ParseHandler handler)
         {
             Text = text;
-            //var parser = new Parser(this);
-            //var root = parser.ParseCompilationUnit();
-            //var diagnostics = parser.Diagnostics.ToImmutableArray();
             handler(this, out var root, out var diagnostics);
 
             Diagnostics = diagnostics;

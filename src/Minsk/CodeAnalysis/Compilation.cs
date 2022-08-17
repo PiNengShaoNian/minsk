@@ -21,6 +21,8 @@ namespace Minsk.CodeAnalysis
 
         public Compilation Previous { get; }
         public ImmutableArray<SyntaxTree> SyntaxTrees { get; }
+        public ImmutableArray<FunctionSymbol> Functions => GlobalScope.Functions;
+        public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
 
         internal BoundGlobalScope GlobalScope
         {
@@ -33,6 +35,24 @@ namespace Minsk.CodeAnalysis
                 }
 
                 return _globalScope;
+            }
+        }
+
+        public IEnumerable<Symbol> GetSymbols()
+        {
+            var submission = this;
+            var seenSymbols = new HashSet<string>();
+            while (submission != null)
+            {
+                foreach (var function in submission.Functions)
+                    if (seenSymbols.Add(function.Name))
+                        yield return function;
+
+                foreach (var variable in submission.Variables)
+                    if (seenSymbols.Add(variable.Name))
+                        yield return variable;
+
+                submission = submission.Previous;
             }
         }
 
@@ -86,6 +106,16 @@ namespace Minsk.CodeAnalysis
                     functionBody.Value.WriteTo(writer);
                 }
             }
+        }
+
+        public void EmitTree(FunctionSymbol function, TextWriter writer)
+        {
+            var program = Binder.BindProgram(GlobalScope);
+            if (!program.Functions.TryGetValue(function, out var body))
+                return;
+             
+            function.WriteTo(writer);
+            body.WriteTo(writer);
         }
     }
 }

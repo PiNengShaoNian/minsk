@@ -3,15 +3,22 @@ using Minsk.CodeAnalysis.Symbols;
 using Minsk.CodeAnalysis.Syntax;
 using Minsk.CodeAnalysis.Text;
 using Minsk.IO;
+using System.IO;
 
 namespace Minsk
 {
     internal sealed class MinskRepl : Repl
     {
         private Compilation _previous;
+        private static bool _loadingSubmission;
         private bool _showTree;
         private bool _showProgram;
         private Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
+
+        public MinskRepl()
+        {
+            LoadSubmissions();
+        }
 
         protected override void RenderLine(string line)
         {
@@ -65,6 +72,55 @@ namespace Minsk
         private void EvaluateReset()
         {
             _previous = null;
+            _variables.Clear();
+            ClearSubmissions();
+        }
+
+        [MetaCommand("load", "Loads a script file")]
+        private void EvaluateLoad(string path)
+        {
+            path = Path.GetFullPath(path);
+            if (!File.Exists(path))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: file does not exist '{path}'");
+                Console.ResetColor();
+                return;
+            }
+
+            var text = File.ReadAllText(path);
+            EvaluateSubmission(text);
+        }
+
+        [MetaCommand("ls", "Lists all symbols")]
+        private void EvaluateLs()
+        {
+            if (_previous == null) return;
+
+            var symbols = _previous.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
+
+            foreach (var symbol in symbols)
+            {
+                symbol.WriteTo(Console.Out);
+            }
+        }
+
+        [MetaCommand("dump", "Shows bound tree of given function")]
+        private void EvaluateDump(string functionName)
+        {
+            if (_previous == null) return;
+
+            var function = _previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
+
+            if (function == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: function '{functionName}' does not exist");
+                Console.ResetColor();
+                return;
+            }
+
+            _previous.EmitTree(function, Console.Out);
         }
 
         protected override void EvaluateSubmission(string text)
@@ -90,11 +146,59 @@ namespace Minsk
                     Console.ResetColor();
                 }
                 _previous = compilation;
+
+                SaveSubmission(text);
             }
             else
             {
                 Console.Out.WriteDiagnostics(diagnostics);
             }
+        }
+
+        private static string GetSubmissionDirectory()
+        {
+            var locationAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var submissionDirectory = Path.Combine(locationAppData, "Minsk", "Submissions");
+            return submissionDirectory;
+        }
+
+        private void LoadSubmissions()
+        {
+            var submissionDirectory = GetSubmissionDirectory();
+            if (!Directory.Exists(submissionDirectory)) return;
+            var files = Directory.GetFiles(submissionDirectory).OrderBy(f => f).ToArray();
+            if (files.Length == 0) return;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"loaded {files.Length} submission(s)");
+            Console.ResetColor();
+
+            _loadingSubmission = true;
+
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText(file);
+                EvaluateSubmission(text);
+            }
+
+            _loadingSubmission = false;
+        }
+
+        private static void ClearSubmissions()
+        {
+            Directory.Delete(GetSubmissionDirectory(), recursive: true);
+        }
+
+        private static void SaveSubmission(string text)
+        {
+            if (_loadingSubmission)
+                return;
+            var submissionDirectory = GetSubmissionDirectory();
+            Directory.CreateDirectory(submissionDirectory);
+
+            var count = Directory.GetFiles(submissionDirectory).Length;
+            var name = $"submission{count:0000}";
+            var fileName = Path.Combine(submissionDirectory, name);
+            File.WriteAllText(fileName, text);
         }
 
         protected override bool IsCompleteSubmission(string text)
