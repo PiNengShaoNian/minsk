@@ -85,20 +85,20 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("\"test\" == \"abc\"", false)]
         [InlineData("\"test\" + \"abc\"", "testabc")]
 
-        [InlineData("var a = 10", 10)]
+        [InlineData("var a = 10 return a", 10)]
         [InlineData(@"{var a = 10
-            a * a}", 100)]
+            return a * a}", 100)]
         [InlineData(@"{
                            var a = 0
                            if a == 0
                               a = 100      
-                           a
+                           return a
                       }", 100)]
         [InlineData(@"{
                            var a = 1
                            if a == 0
                               a = 100      
-                           a
+                           return a
                       }", 1)]
         [InlineData(@"{
                            var a = 1
@@ -106,7 +106,7 @@ namespace Minsk.Tests.CodeAnalysis
                               a = 100      
                            else 
                               a = 200
-                           a
+                           return a
                       }", 200)]
         [InlineData(@"{
                           var a = 0
@@ -116,7 +116,7 @@ namespace Minsk.Tests.CodeAnalysis
                               i = i - 1
                               a = a + 1
                           }
-                          a
+                          return a
                       }", 10)]
         [InlineData(@"{
                           var a = 0
@@ -126,7 +126,7 @@ namespace Minsk.Tests.CodeAnalysis
                               i = i - 2
                               a = a + 1
                           }
-                          a
+                          return a
                       }", 5)]
         [InlineData(@"{
                           var a = 0
@@ -134,20 +134,20 @@ namespace Minsk.Tests.CodeAnalysis
                           {
                               a = a + i
                           }
-                          a
+                          return a
                       }", 55)]
         [InlineData(@"{
                           var a = 10
                           for i = 0 to (a = a - 1)
                           {
                           }
-                          a
+                          return a
                       }", 9)]
         [InlineData(@"{ 
                           var a = 0 
                           do a = a + 1 
                           while a < 10
-                          a
+                          return a
                       }", 10)]
         [InlineData(@"{ 
                           var i = 0
@@ -157,7 +157,7 @@ namespace Minsk.Tests.CodeAnalysis
                               if i == 5
                                   continue
                           }
-                          i
+                          return i
                       }", 5)]
         [InlineData(@"{ 
                           var i = 0
@@ -167,7 +167,7 @@ namespace Minsk.Tests.CodeAnalysis
                               if i == 5
                                   continue
                           } while i < 5
-                          i
+                          return i
                       }", 5)]
         public void Evaluator_Computes_CorrectValues(string expression, object expectedValue)
         {
@@ -331,7 +331,7 @@ namespace Minsk.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                Parameter 'n' requires a value of type 'int' but was given a value of type 'string'.
+                Cannot convert type 'string' to 'int'. An explicit conversion exists (are you missing a cast?).
             ";
 
             AssertDiagnostics(text, diagnostics);

@@ -1,6 +1,6 @@
-function sum(n: int): int {
-    if(n == 0) return n
-    else return sum(n-1) + n
+function test(n: int): bool
+{
+    return n > 10
 }
-
-print(sum(3))
+let testValue = "string"
+test(testValue)
