@@ -9,14 +9,16 @@ namespace Minsk.CodeAnalysis.Binding
     internal sealed class Binder
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+        private readonly bool _isScript;
         private readonly FunctionSymbol _function;
         private BoundScope _scope;
         private int _labelCounter;
         private Stack<(BoundLabel breakLabel, BoundLabel continueLabel)> _loopStack = new Stack<(BoundLabel breakLabel, BoundLabel continueLabel)>();
 
-        public Binder(BoundScope parent, FunctionSymbol function)
+        public Binder(bool isScript, BoundScope parent, FunctionSymbol function)
         {
             _scope = new BoundScope(parent);
+            _isScript = isScript;
             _function = function;
 
             if (function != null)
@@ -28,10 +30,10 @@ namespace Minsk.CodeAnalysis.Binding
             }
         }
 
-        public static BoundGlobalScope BindGlobalScope(BoundGlobalScope previous, ImmutableArray<SyntaxTree> syntaxTrees)
+        public static BoundGlobalScope BindGlobalScope(bool isScript, BoundGlobalScope previous, ImmutableArray<SyntaxTree> syntaxTrees)
         {
             var parentScope = CreateParentScope(previous);
-            var binder = new Binder(parentScope, null);
+            var binder = new Binder(isScript, parentScope, null);
             var functionDeclarations = syntaxTrees.SelectMany(st => st.Root.Members).OfType<FunctionDeclarationSyntax>();
             foreach (var function in functionDeclarations)
                 binder.BindFunctionDeclaration(function);
@@ -41,7 +43,7 @@ namespace Minsk.CodeAnalysis.Binding
             var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members).OfType<GlobalStatementSyntax>();
             foreach (var globalStatement in globalStatements)
             {
-                var s = binder.BindStatement(globalStatement.Statement);
+                var s = binder.BindGlobalStatement(globalStatement.Statement);
                 statements.Add(s);
             }
 
@@ -55,7 +57,7 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundGlobalScope(previous, diagnostics, functions, variables, statements.ToImmutable());
         }
 
-        public static BoundProgram BindProgram(BoundProgram previous, BoundGlobalScope globalScope)
+        public static BoundProgram BindProgram(bool isScript, BoundProgram previous, BoundGlobalScope globalScope)
         {
             var parentScope = CreateParentScope(globalScope);
             var functionBodies = ImmutableDictionary.CreateBuilder<FunctionSymbol, BoundBlockStatement>();
@@ -63,7 +65,7 @@ namespace Minsk.CodeAnalysis.Binding
 
             foreach (var function in globalScope.Functions)
             {
-                var binder = new Binder(parentScope, function);
+                var binder = new Binder(isScript, parentScope, function);
                 var body = binder.BindStatement(function.Declaration.Body);
                 var loweredBody = Lowerer.Lower(body);
 
@@ -143,7 +145,33 @@ namespace Minsk.CodeAnalysis.Binding
 
         public DiagnosticBag Diagnostics => _diagnostics;
 
-        public BoundStatement BindStatement(StatementSyntax syntax)
+        private BoundStatement BindGlobalStatement(StatementSyntax syntax)
+        {
+            return BindStatement(syntax, isGlobal: true);
+        }
+
+        private BoundStatement BindStatement(StatementSyntax syntax, bool isGlobal = false)
+        {
+            var result = BindStatementInternal(syntax);
+            if (!_isScript || !isGlobal)
+            {
+                if (result is BoundExpressionStatement es)
+                {
+                    var kind = es.Expression.Kind;
+                    var isAllowedExpression =
+                                              kind == BoundNodeKind.AssignmentExpression ||
+                                              kind == BoundNodeKind.CallExpression ||
+                                              kind == BoundNodeKind.ErrorExpression;
+
+                    if (!isAllowedExpression)
+                        _diagnostics.ReportInvalidExpressionStatement(syntax.Location);
+                }
+            }
+
+            return result;
+        }
+
+        private BoundStatement BindStatementInternal(StatementSyntax syntax)
         {
             switch (syntax.Kind)
             {

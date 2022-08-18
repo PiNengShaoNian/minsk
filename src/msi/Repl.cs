@@ -64,7 +64,7 @@ namespace Minsk
         {
             private readonly Action<string> _lineRender;
             private readonly ObservableCollection<string> _submissionDocument;
-            private readonly int _cursorTop;
+            private int _cursorTop;
             private int _renderedLineCount;
             private int _currentLineIndex;
             private int _currentCharacter;
@@ -90,6 +90,14 @@ namespace Minsk
 
                 foreach (var line in _submissionDocument)
                 {
+                    if (_cursorTop + lineCount >= Console.WindowHeight)
+                    {
+                        Console.SetCursorPosition(0, Console.WindowHeight - 1);
+                        Console.WriteLine();
+                        if (_cursorTop > 0)
+                            _cursorTop--;
+                    }
+
                     Console.SetCursorPosition(0, _cursorTop + lineCount);
                     Console.ForegroundColor = ConsoleColor.Green;
 
@@ -156,8 +164,6 @@ namespace Minsk
         }
 
         private ObservableCollection<string> _document = new ObservableCollection<string>() { "" };
-
-
 
         private string EditSubmission()
         {
@@ -575,7 +581,7 @@ namespace Minsk
                         Console.Out.WritePunctuation(">");
                     }
                     Console.Out.WriteLine();
-                    
+
                     for (int _ = 0; _ < maxNameLength; _++)
                         Console.Out.Write(" ");
                 }
