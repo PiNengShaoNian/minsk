@@ -24,17 +24,25 @@ namespace Minsk.CodeAnalysis.Binding
         public static Conversion Classify(TypeSymbol from, TypeSymbol to)
         {
             if (from == to)
-                return Conversion.Identity;
-            else if (from == TypeSymbol.Int || from == TypeSymbol.Bool)
+                return Identity;
+
+            if (from != TypeSymbol.Void && to == TypeSymbol.Any)
+                return Implicit;
+
+            if (from == TypeSymbol.Any && to != TypeSymbol.Void)
+                return Explicit;
+
+            if (from == TypeSymbol.Int || from == TypeSymbol.Bool)
             {
                 if (to == TypeSymbol.String)
-                    return Conversion.Explicit;
+                    return Explicit;
             }
-            else if (from == TypeSymbol.String)
-                if (to == TypeSymbol.Bool || to == TypeSymbol.Int)
-                    return Conversion.Explicit;
 
-            return Conversion.None;
+            if (from == TypeSymbol.String)
+                if (to == TypeSymbol.Bool || to == TypeSymbol.Int)
+                    return Explicit;
+
+            return None;
         }
     }
 }

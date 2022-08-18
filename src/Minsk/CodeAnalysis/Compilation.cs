@@ -52,10 +52,6 @@ namespace Minsk.CodeAnalysis
             var submission = this;
             var seenSymbols = new HashSet<string>();
 
-            foreach (var f in BuiltinFunctions.GetAll())
-                if (seenSymbols.Add(f.Name))
-                    yield return f;
-
             while (submission != null)
             {
                 foreach (var function in submission.Functions)
@@ -68,6 +64,10 @@ namespace Minsk.CodeAnalysis
 
                 submission = submission.Previous;
             }
+
+            foreach (var f in BuiltinFunctions.GetAll())
+                if (seenSymbols.Add(f.Name))
+                    yield return f;
         }
 
         private BoundProgram GetProgram()

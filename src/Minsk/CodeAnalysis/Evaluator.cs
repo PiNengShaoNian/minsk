@@ -122,12 +122,15 @@ namespace Minsk.CodeAnalysis
 
         private object EvaluateConversionExpression(BoundConversionExpression node)
         {
-            if (node.Type == TypeSymbol.Bool)
-                return Convert.ToBoolean(EvaluateExpression(node.Expression));
+            var value = EvaluateExpression(node.Expression);
+            if (node.Type == TypeSymbol.Any)
+                return value;
+            else if (node.Type == TypeSymbol.Bool)
+                return Convert.ToBoolean(value);
             else if (node.Type == TypeSymbol.String)
-                return Convert.ToString(EvaluateExpression(node.Expression));
+                return Convert.ToString(value);
             else if (node.Type == TypeSymbol.Int)
-                return Convert.ToInt32(EvaluateExpression(node.Expression));
+                return Convert.ToInt32(value);
             else
                 throw new Exception($"Unexpected type {node.Type}");
         }
