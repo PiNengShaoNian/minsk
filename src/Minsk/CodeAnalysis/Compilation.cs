@@ -3,6 +3,7 @@ using Minsk.CodeAnalysis.Binding;
 using System.Collections.Immutable;
 using Minsk.CodeAnalysis.Lowering;
 using Minsk.CodeAnalysis.Symbols;
+using Minsk.CodeAnalysis.Emit;
 
 namespace Minsk.CodeAnalysis
 {
@@ -123,6 +124,13 @@ namespace Minsk.CodeAnalysis
             if (!program.Functions.TryGetValue(function, out var body))
                 return;
             body.WriteTo(writer);
+        }
+
+        public ImmutableArray<Diagnostic> Emit(string moudleName, string[] references, string outputPath)
+        {
+            var program = GetProgram();
+
+            return Emitter.Emit(program, moudleName, references, outputPath);
         }
     }
 }

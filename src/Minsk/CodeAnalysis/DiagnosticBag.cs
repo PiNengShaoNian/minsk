@@ -1,6 +1,7 @@
 ﻿using Minsk.CodeAnalysis.Symbols;
 using Minsk.CodeAnalysis.Syntax;
 using Minsk.CodeAnalysis.Text;
+using Mono.Cecil;
 using System.Collections;
 
 namespace Minsk.CodeAnalysis
@@ -198,6 +199,41 @@ namespace Minsk.CodeAnalysis
         {
             var message = "The 'return' keyword cannot be followed by an expression in global statements.";
             Report(location, message);
+        }
+
+        internal void ReportInvalidReference(string reference)
+        {
+            var message = $"The reference is not a valid .NET assembly: '{reference}'";
+
+            Report(default, message);
+        }
+
+        internal void ReportRequiredTypeNotFound(string minskName, string metadataName)
+        {
+            var message =
+                minskName != null ?
+                $"The required type '{minskName}' ('{metadataName}') cannot be resolve among the given references."
+                : $"The required type '{metadataName}' cannot be resolve among the given references.";
+            Report(default, message);
+        }
+
+        internal void ReportRequiredTypeAmbigous(string minskName, string metadataName, TypeDefinition[] foundTypes)
+        {
+            var assemblyNames = foundTypes.Select(t => t.Module.Assembly.Name.Name);
+            var assemblyNameList = String.Join(", ", assemblyNames);
+
+            var message = minskName != null ?
+    $"The required type '{minskName}' ('{metadataName}') was found in multiple references {assemblyNameList}."
+    : $"The required type '{metadataName}' was found in multiple references {assemblyNameList}.";
+
+            Report(default, message);
+        }
+
+        internal void ReportRequiredMethodNotFound(string typeName, string methodName, string[] parameterTypeNames)
+        {
+            var parameterTypeNameList = String.Join(", ", parameterTypeNames);
+            var message = $"The required method '{typeName}.{methodName}({parameterTypeNameList})' cannot be resolved amont the given references.";
+            Report(default, message);
         }
     }
 }

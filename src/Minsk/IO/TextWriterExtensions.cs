@@ -69,9 +69,18 @@ namespace Minsk.IO
 
         public static void WriteDiagnostics(this TextWriter writer, IEnumerable<Diagnostic> diagnostics)
         {
-            foreach (var diagnostic in diagnostics.OrderBy(d => d.Location.FileName)
-                                                  .ThenBy(diag => diag.Location.Span.Start)
-                                                  .ThenBy(d => d.Location.Span.Length))
+            foreach (var diagnostic in diagnostics.Where(d => d.Location.Text == null))
+            {
+                writer.SetForeground(ConsoleColor.DarkRed);
+                writer.Write(diagnostic.Message);
+                writer.ResetColor();
+            }
+
+            foreach (var diagnostic in diagnostics
+                .Where(d => d.Location.Text != null)
+                .OrderBy(d => d.Location.FileName)
+                .ThenBy(diag => diag.Location.Span.Start)
+                .ThenBy(d => d.Location.Span.Length))
             {
                 var text = diagnostic.Location.Text;
                 var fileName = diagnostic.Location.FileName;
