@@ -1,5 +1,9 @@
 function main() {
+    var name = "something"
+    var otherName = "other"
+
     print("What's your name?")
-    let name = input()
+    otherName = name = input()
     print("Hello " + name + "!")
+    print(otherName)
 }
