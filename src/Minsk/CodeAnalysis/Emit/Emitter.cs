@@ -6,18 +6,16 @@ using System.Collections.Immutable;
 
 namespace Minsk.CodeAnalysis.Emit
 {
-    internal class Emitter
+    internal sealed class Emitter
     {
         private readonly List<AssemblyDefinition> _assemblies = new List<AssemblyDefinition>();
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly Dictionary<TypeSymbol, TypeReference> _knownTypes = new Dictionary<TypeSymbol, TypeReference>();
+        private readonly AssemblyDefinition _assemblyDefinition;
+        private readonly MethodReference _consoleWriteLineReference;
 
-        internal static ImmutableArray<Diagnostic> Emit(BoundProgram program, string moduleName, string[] references, string outputPath)
+        private Emitter(string moduleName, string[] references)
         {
-            if (program.Diagnostics.Any())
-                return program.Diagnostics;
-
-            var result = new DiagnosticBag();
             var asseblies = new List<AssemblyDefinition>();
             foreach (var reference in references)
             {
@@ -28,7 +26,7 @@ namespace Minsk.CodeAnalysis.Emit
                 }
                 catch (BadImageFormatException)
                 {
-                    result.ReportInvalidReference(reference);
+                    _diagnostics.ReportInvalidReference(reference);
                 }
             }
 
@@ -42,14 +40,13 @@ namespace Minsk.CodeAnalysis.Emit
             };
 
             var assemblyName = new AssemblyNameDefinition(moduleName, new Version(1, 0));
-            var assemblyDefinition = AssemblyDefinition.CreateAssembly(assemblyName, moduleName, ModuleKind.Console);
-            var knownTypes = new Dictionary<TypeSymbol, TypeReference>();
+            _assemblyDefinition = AssemblyDefinition.CreateAssembly(assemblyName, moduleName, ModuleKind.Console);
 
             foreach (var (typeSymbol, metadataName) in buildInTypes)
             {
                 var minskName = typeSymbol.Name;
                 var typeReference = ResolveType(minskName, metadataName);
-                knownTypes.Add(typeSymbol, typeReference);
+                _knownTypes.Add(typeSymbol, typeReference);
             }
 
             TypeReference ResolveType(string minskName, string metadataName)
@@ -62,16 +59,16 @@ namespace Minsk.CodeAnalysis.Emit
                                               .ToArray();
                 if (foundTypes.Length == 1)
                 {
-                    typeReference = assemblyDefinition.MainModule.ImportReference(foundTypes[0]);
+                    typeReference = _assemblyDefinition.MainModule.ImportReference(foundTypes[0]);
                     return typeReference;
                 }
                 else if (foundTypes.Length == 0)
                 {
-                    result.ReportRequiredTypeNotFound(minskName, metadataName);
+                    _diagnostics.ReportRequiredTypeNotFound(minskName, metadataName);
                 }
                 else if (foundTypes.Length > 1)
                 {
-                    result.ReportRequiredTypeAmbigous(minskName, metadataName, foundTypes);
+                    _diagnostics.ReportRequiredTypeAmbigous(minskName, metadataName, foundTypes);
                 }
 
                 return null;
@@ -106,53 +103,66 @@ namespace Minsk.CodeAnalysis.Emit
                         if (!allParametersMatch)
                             continue;
 
-                        return assemblyDefinition.MainModule.ImportReference(method);
+                        return _assemblyDefinition.MainModule.ImportReference(method);
                     }
 
-                    result.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
+                    _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
                     return null;
                 }
                 else if (foundTypes.Length == 0)
                 {
-                    result.ReportRequiredTypeNotFound(null, typeName);
+                    _diagnostics.ReportRequiredTypeNotFound(null, typeName);
                 }
                 else if (foundTypes.Length > 1)
                 {
-                    result.ReportRequiredTypeAmbigous(null, typeName, foundTypes);
+                    _diagnostics.ReportRequiredTypeAmbigous(null, typeName, foundTypes);
                 }
 
                 return null;
             }
 
-            var consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new[] { "System.String" });
+            _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new[] { "System.String" });
+        }
 
-            if (result.Any())
+        private ImmutableArray<Diagnostic> Emit(BoundProgram program, string outputPath)
+        {
+            if (_diagnostics.Any())
             {
-                return result.ToImmutableArray();
+                return _diagnostics.ToImmutableArray();
             }
 
-            var objectType = knownTypes[TypeSymbol.Any];
+            var objectType = _knownTypes[TypeSymbol.Any];
             var typeDefinition = new TypeDefinition(
                 "",
                 "Program",
                 TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public,
                 objectType);
-            assemblyDefinition.MainModule.Types.Add(typeDefinition);
+            _assemblyDefinition.MainModule.Types.Add(typeDefinition);
 
-            var voidType = knownTypes[TypeSymbol.Void];
+            var voidType = _knownTypes[TypeSymbol.Void];
             var mainMethod = new MethodDefinition("Main", MethodAttributes.Static | MethodAttributes.Private, voidType);
             typeDefinition.Methods.Add(mainMethod);
 
             var ilProcessor = mainMethod.Body.GetILProcessor();
             ilProcessor.Emit(OpCodes.Ldstr, "Hello world from minsk!");
-            ilProcessor.Emit(OpCodes.Call, consoleWriteLineReference);
+            ilProcessor.Emit(OpCodes.Call, _consoleWriteLineReference);
             ilProcessor.Emit(OpCodes.Ret);
 
-            assemblyDefinition.EntryPoint = mainMethod;
+            _assemblyDefinition.EntryPoint = mainMethod;
 
-            assemblyDefinition.Write(outputPath);
+            _assemblyDefinition.Write(outputPath);
+            return _diagnostics.ToImmutableArray();
+        }
 
-            return result.ToImmutableArray();
+
+        internal static ImmutableArray<Diagnostic> Emit(BoundProgram program, string moduleName, string[] references, string outputPath)
+        {
+            if (program.Diagnostics.Any())
+                return program.Diagnostics;
+
+            var emitter = new Emitter(moduleName, references);
+
+            return emitter.Emit(program, outputPath);
         }
     }
 }
