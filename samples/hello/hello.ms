@@ -1,9 +1,10 @@
 function main() {
-    var name = "something"
-    var otherName = "other"
-
-    print("What's your name?")
-    otherName = name = input()
+    let name = readLine("Name: ")
     print("Hello " + name + "!")
-    print(otherName)
+}
+
+function readLine(prompt: string): string {
+    print(prompt)
+    let name = input()
+    return name
 }

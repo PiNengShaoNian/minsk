@@ -171,10 +171,18 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitFunctionDeclaration(FunctionSymbol function)
         {
-            var voidType = _knownTypes[TypeSymbol.Void];
-            var mainMethod = new MethodDefinition(function.Name, MethodAttributes.Static | MethodAttributes.Private, voidType);
-            _typeDefinition.Methods.Add(mainMethod);
-            _methods.Add(function, mainMethod);
+            var functionType = _knownTypes[function.Type];
+            var method = new MethodDefinition(function.Name, MethodAttributes.Static | MethodAttributes.Private, functionType);
+
+            foreach (var parameter in function.Parameters)
+            {
+                var parameterType = _knownTypes[parameter.Type];
+                var parameterDefinition = new ParameterDefinition(parameter.Name, ParameterAttributes.None, parameterType);
+                method.Parameters.Add(parameterDefinition);
+            }
+
+            _typeDefinition.Methods.Add(method);
+            _methods.Add(function, method);
         }
 
         private void EmitFunctionBody(FunctionSymbol function, BoundBlockStatement body)
@@ -247,9 +255,12 @@ namespace Minsk.CodeAnalysis.Emit
             throw new NotImplementedException();
         }
 
-        private void EmitReturnStatement(ILProcessor ilProcessor, BoundReturnStatement statement)
+        private void EmitReturnStatement(ILProcessor ilProcessor, BoundReturnStatement node)
         {
-            throw new NotImplementedException();
+            if (node.Expression != null)
+                EmitExpression(ilProcessor, node.Expression);
+
+            ilProcessor.Emit(OpCodes.Ret);
         }
 
         private void EmitExpressionStatement(ILProcessor ilProcessor, BoundExpressionStatement statement)
@@ -349,8 +360,15 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitVariableExpression(ILProcessor ilProcessor, BoundVariableExpression node)
         {
-            var variableDefinition = _locals[node.Variable];
-            ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+            if (node.Variable is ParameterSymbol parameter)
+            {
+                ilProcessor.Emit(OpCodes.Ldarg, parameter.Ordinal);
+            }
+            else
+            {
+                var variableDefinition = _locals[node.Variable];
+                ilProcessor.Emit(OpCodes.Ldloc, variableDefinition);
+            }
         }
 
         private void EmitAssignmentExpression(ILProcessor ilProcessor, BoundAssignmentExpression node)
