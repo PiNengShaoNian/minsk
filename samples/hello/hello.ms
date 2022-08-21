@@ -1,10 +1,12 @@
 function main() {
     let name = readLine("Name: ")
     print("Hello " + name + "!")
-    let x = string(true)
-    let y = int("42")
-    let z = any("text")
-    let b = any(false)
+    let x = -1
+    let y = +1
+    let z = ~1
+    let a = true
+    let b = !false
+    let c = !a
 }
 
 function readLine(prompt: string): string {

@@ -4,6 +4,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using System.Collections.Immutable;
+using Minsk.CodeAnalysis.Syntax;
 
 namespace Minsk.CodeAnalysis.Emit
 {
@@ -307,16 +308,32 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitUnaryExpression(ILProcessor ilProcessor, BoundUnaryExpression node)
         {
-            throw new NotImplementedException();
+            EmitExpression(ilProcessor, node.Operand);
+            if (node.Op.Kind == BoundUnaryOperatorKind.Identity)
+            {
+                //done
+            }
+            else if (node.Op.Kind == BoundUnaryOperatorKind.LogicalNegation)
+            {
+                ilProcessor.Emit(OpCodes.Ldc_I4_0);
+                ilProcessor.Emit(OpCodes.Ceq);
+            }
+            else if (node.Op.Kind == BoundUnaryOperatorKind.Negation)
+            {
+                ilProcessor.Emit(OpCodes.Neg);
+            }
+            else if (node.Op.Kind == BoundUnaryOperatorKind.OnesComplement)
+            {
+                ilProcessor.Emit(OpCodes.Not);
+            }
+            else
+            {
+                throw new Exception($"Unexpected unary operator {SyntaxFacts.GetText(node.Op.SyntaxKind)}({node.Operand.Type})");
+            }
         }
 
         private void EmitLiteralExpression(ILProcessor ilProcessor, BoundLiteralExpression node)
         {
-            // int
-            // bool
-            // string
-            // any
-
             if (node.Type == TypeSymbol.Int)
             {
                 var value = (int)node.Value;
@@ -423,7 +440,7 @@ namespace Minsk.CodeAnalysis.Emit
                 //            Done
             }
             else if (node.Type == TypeSymbol.Bool)
-            { 
+            {
                 ilProcessor.Emit(OpCodes.Call, _convertToBooleanReference);
             }
             else if (node.Type == TypeSymbol.Int)
