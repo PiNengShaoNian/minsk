@@ -19,7 +19,7 @@ namespace Minsk.CodeAnalysis.Lowering
         {
         }
 
-        private static BoundBlockStatement Flatten(BoundStatement statement)
+        private static BoundBlockStatement Flatten(FunctionSymbol function, BoundStatement statement)
         {
             var builder = ImmutableArray.CreateBuilder<BoundStatement>();
             var stack = new Stack<BoundStatement>();
@@ -42,14 +42,30 @@ namespace Minsk.CodeAnalysis.Lowering
                 }
             }
 
+            if (function.Type == TypeSymbol.Void)
+            {
+                if (builder.Count == 0 || CanllFallThrough(builder.Last()))
+                {
+                    builder.Add(new BoundReturnStatement(null));
+                }
+            }
+
             return new BoundBlockStatement(builder.ToImmutable());
         }
 
-        public static BoundBlockStatement Lower(BoundStatement statement)
+        private static bool CanllFallThrough(BoundStatement boundStatement)
+        {
+            // TODO: We don't rewrite conditional gotos where the condition is always true.
+            //       We shouldn't handle this here, because we should really rewrite those to 
+            //       unconditional gotos in the first place.
+            return boundStatement.Kind != BoundNodeKind.ReturnStatement && boundStatement.Kind != BoundNodeKind.GotoStatement;
+        }
+
+        public static BoundBlockStatement Lower(FunctionSymbol function, BoundStatement statement)
         {
             var lowerer = new Lowerer();
             var result = lowerer.RewriteStatement(statement);
-            return Flatten(result);
+            return Flatten(function, result);
         }
 
         protected override BoundStatement RewriteDoWhileStatement(BoundDoWhileStatement node)
