@@ -24,7 +24,8 @@ namespace Minsk.CodeAnalysis.Emit
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
         private TypeDefinition _typeDefinition;
-
+        private readonly List<(int InstructionIndex, BoundLabel Target)> _fixups = new List<(int InstructionIndex, BoundLabel Target)>();
+        private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
         private Emitter(string moduleName, string[] references)
         {
             var asseblies = new List<AssemblyDefinition>();
@@ -199,11 +200,22 @@ namespace Minsk.CodeAnalysis.Emit
         {
             var method = _methods[function];
             _locals.Clear();
+            _fixups.Clear();
+            _labels.Clear();
 
             var ilProcessor = method.Body.GetILProcessor();
 
             foreach (var statement in body.Statements)
                 EmitStatement(ilProcessor, statement);
+
+            foreach (var fixup in _fixups)
+            {
+                var targetLabel = fixup.Target;
+                var targetInstructionIndex = _labels[targetLabel];
+                var targetInstruction = ilProcessor.Body.Instructions[targetInstructionIndex];
+                var instructionToFixup = ilProcessor.Body.Instructions[fixup.InstructionIndex];
+                instructionToFixup.Operand = targetInstruction;
+            }
 
             method.Body.OptimizeMacros();
         }
@@ -246,19 +258,25 @@ namespace Minsk.CodeAnalysis.Emit
             ilProcessor.Emit(OpCodes.Stloc, variableDefinition);
         }
 
-        private void EmitGotoStatement(ILProcessor ilProcessor, BoundGotoStatement statement)
+        private void EmitGotoStatement(ILProcessor ilProcessor, BoundGotoStatement node)
         {
-            throw new NotImplementedException();
+            _fixups.Add((ilProcessor.Body.Instructions.Count, node.Label));
+            ilProcessor.Emit(OpCodes.Br, Instruction.Create(OpCodes.Nop));
         }
 
-        private void EmitLabelStatement(ILProcessor ilProcessor, BoundLabelStatement statement)
+        private void EmitLabelStatement(ILProcessor ilProcessor, BoundLabelStatement node)
         {
-            throw new NotImplementedException();
+            _labels.Add(node.Label, ilProcessor.Body.Instructions.Count);
         }
 
-        private void EmitConditionalGotoStatement(ILProcessor ilProcessor, BoundConditionalGotoStatement statement)
+        private void EmitConditionalGotoStatement(ILProcessor ilProcessor, BoundConditionalGotoStatement node)
         {
-            throw new NotImplementedException();
+            EmitExpression(ilProcessor, node.Condition);
+
+            var opCode = node.JumpIfTrue ? OpCodes.Brtrue : OpCodes.Brfalse;
+
+            _fixups.Add((ilProcessor.Body.Instructions.Count, node.Label));
+            ilProcessor.Emit(opCode, Instruction.Create(OpCodes.Nop));
         }
 
         private void EmitReturnStatement(ILProcessor ilProcessor, BoundReturnStatement node)
