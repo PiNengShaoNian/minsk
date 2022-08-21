@@ -1,7 +1,6 @@
 function main() {
-    for i = 0 to 10
-    {
-        print(string(i))
+    for i = 0 to 10 {
+        print(string(random(45)))
     }
 }
 

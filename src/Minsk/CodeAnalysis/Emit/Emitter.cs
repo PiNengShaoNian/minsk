@@ -21,11 +21,16 @@ namespace Minsk.CodeAnalysis.Emit
         private readonly MethodReference _convertToInt32Reference;
         private readonly MethodReference _convertToStringReference;
         private readonly MethodReference _objectEqualsReference;
+        private readonly MethodReference _randomNextReference;
+        private readonly TypeReference _randomReference;
+        private readonly MethodReference _randomCtorReference;
         private readonly Dictionary<FunctionSymbol, MethodDefinition> _methods = new Dictionary<FunctionSymbol, MethodDefinition>();
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
-        private TypeDefinition _typeDefinition;
         private readonly List<(int InstructionIndex, BoundLabel Target)> _fixups = new List<(int InstructionIndex, BoundLabel Target)>();
         private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
+        private TypeDefinition _typeDefinition;
+        private FieldDefinition _randomFieldDefinition;
+
         private Emitter(string moduleName, string[] references)
         {
             var asseblies = new List<AssemblyDefinition>();
@@ -140,6 +145,10 @@ namespace Minsk.CodeAnalysis.Emit
             _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new[] { "System.Object" });
             _convertToStringReference = ResolveMethod("System.Convert", "ToString", new[] { "System.Object" });
             _objectEqualsReference = ResolveMethod("System.Object", "Equals", new[] { "System.Object", "System.Object" });
+            _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
+            _randomNextReference = ResolveMethod("System.Random", "Next", new[] { "System.Int32" });
+            _randomReference = ResolveType(null, "System.Random");
+
 
         }
 
@@ -503,6 +512,20 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitCallExpression(ILProcessor ilProcessor, BoundCallExpression node)
         {
+            if (node.Function == BuiltinFunctions.Random)
+            {
+                if (_randomFieldDefinition == null)
+                {
+                    EmitRandomField();
+                }
+
+                ilProcessor.Emit(OpCodes.Ldsfld, _randomFieldDefinition);
+                foreach (var argument in node.Arguments)
+                    EmitExpression(ilProcessor, argument);
+                ilProcessor.Emit(OpCodes.Call, _randomNextReference);
+                return;
+            }
+
             foreach (var argument in node.Arguments)
                 EmitExpression(ilProcessor, argument);
 
@@ -514,15 +537,26 @@ namespace Minsk.CodeAnalysis.Emit
             {
                 ilProcessor.Emit(OpCodes.Call, _consoleReadLineReference);
             }
-            else if (node.Function == BuiltinFunctions.Random)
-            {
-                throw new NotImplementedException();
-            }
             else
             {
                 var methodDefinition = _methods[node.Function];
-                ilProcessor.Emit(OpCodes.Call, methodDefinition);
+                ilProcessor.Emit(OpCodes.Callvirt, methodDefinition);
             }
+        }
+
+        private void EmitRandomField()
+        {
+            _randomFieldDefinition = new FieldDefinition("_random", FieldAttributes.Static | FieldAttributes.Private, _randomReference);
+            _typeDefinition.Fields.Add(_randomFieldDefinition);
+
+            var staticConstructor = new MethodDefinition(".cctor",
+                MethodAttributes.Static | MethodAttributes.Private | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                _knownTypes[TypeSymbol.Void]);
+            _typeDefinition.Methods.Insert(0, staticConstructor);
+            var ilProcessor = staticConstructor.Body.GetILProcessor();
+            ilProcessor.Emit(OpCodes.Newobj, _randomCtorReference);
+            ilProcessor.Emit(OpCodes.Stsfld, _randomFieldDefinition);
+            ilProcessor.Emit(OpCodes.Ret);
         }
 
         private void EmitConversionExpression(ILProcessor ilProcessor, BoundConversionExpression node)
