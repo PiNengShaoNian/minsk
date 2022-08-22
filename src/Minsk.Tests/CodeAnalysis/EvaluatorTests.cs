@@ -20,6 +20,10 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("3 == 3", true)]
         [InlineData("12 != 3", true)]
         [InlineData("3 != 3", false)]
+        [InlineData("{ var a : any = 0 var b : any = \"b\" return a == b }", false)]
+        [InlineData("{ var a : any = 0 var b : any = \"b\" return a != b }", true)]
+        [InlineData("{ var a : any = 0 var b : any = 0 return a == b }", true)]
+        [InlineData("{ var a : any = 0 var b : any = 0 return a != b }", false)]
 
         [InlineData("3 < 3", false)]
         [InlineData("3 < 4", true)]

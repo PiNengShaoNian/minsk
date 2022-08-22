@@ -403,10 +403,7 @@ namespace Minsk.CodeAnalysis.Emit
             if (node.Op.Kind == BoundBinaryOperatorKind.Equals)
             {
                 if (node.Left.Type == TypeSymbol.String && node.Right.Type == TypeSymbol.String
-                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.Any
-                    || node.Left.Type == TypeSymbol.String && node.Right.Type == TypeSymbol.Any
-                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.String
-                    )
+                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.Any)
                 {
                     ilProcessor.Emit(OpCodes.Call, _objectEqualsReference);
                     return;
@@ -416,10 +413,7 @@ namespace Minsk.CodeAnalysis.Emit
             if (node.Op.Kind == BoundBinaryOperatorKind.NotEquals)
             {
                 if (node.Left.Type == TypeSymbol.String && node.Right.Type == TypeSymbol.String
-                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.Any
-                    || node.Left.Type == TypeSymbol.String && node.Right.Type == TypeSymbol.Any
-                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.String
-                    )
+                    || node.Left.Type == TypeSymbol.Any && node.Right.Type == TypeSymbol.Any)
                 {
                     ilProcessor.Emit(OpCodes.Call, _objectEqualsReference);
                     ilProcessor.Emit(OpCodes.Ldc_I4_0);
