@@ -14,6 +14,7 @@
         ConditionalGotoStatement,
         DoWhileStatement,
         ReturnStatement,
+        NopStatement,
 
         //Expressions
         UnaryExpression,

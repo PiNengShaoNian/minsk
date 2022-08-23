@@ -103,6 +103,7 @@ namespace Minsk.CodeAnalysis.Binding
                             break;
                         case BoundNodeKind.VariableDeclaration:
                         case BoundNodeKind.ExpressionStatement:
+                        case BoundNodeKind.NopStatement:
                             _statements.Add(statement);
                             break;
                         default:
@@ -195,6 +196,7 @@ namespace Minsk.CodeAnalysis.Binding
                             case BoundNodeKind.VariableDeclaration:
                             case BoundNodeKind.ExpressionStatement:
                             case BoundNodeKind.LabelStatement:
+                            case BoundNodeKind.NopStatement:
                                 if (isLastStatementInBlock)
                                     Connect(current, next);
                                 break;
@@ -203,7 +205,6 @@ namespace Minsk.CodeAnalysis.Binding
                         }
                     }
                 }
-
 
             ScanAgain: foreach (var block in blocks)
                 {

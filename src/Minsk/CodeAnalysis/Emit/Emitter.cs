@@ -251,9 +251,17 @@ namespace Minsk.CodeAnalysis.Emit
                 case BoundNodeKind.ReturnStatement:
                     EmitReturnStatement(ilProcessor, (BoundReturnStatement)statement);
                     break;
+                case BoundNodeKind.NopStatement:
+                    EmitNopStatement(ilProcessor, (BoundNopStatement)statement);
+                    break;
                 default:
                     throw new Exception($"Unexpected node kind {statement.Kind}");
             }
+        }
+
+        private void EmitNopStatement(ILProcessor ilProcessor, BoundNopStatement statement)
+        {
+            ilProcessor.Emit(OpCodes.Nop);
         }
 
         private void EmitVariableDeclaration(ILProcessor ilProcessor, BoundVariableDeclaration node)

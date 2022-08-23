@@ -52,6 +52,9 @@ namespace Minsk.CodeAnalysis.Binding
                 case BoundNodeKind.ReturnStatement:
                     WriteReturnStatement((BoundReturnStatement)node, writer);
                     break;
+                case BoundNodeKind.NopStatement:
+                    WriteNopStatement((BoundNopStatement)node, writer);
+                    break;
                 case BoundNodeKind.UnaryExpression:
                     WriteUnaryExpression((BoundUnaryExpression)node, writer);
                     break;
@@ -79,6 +82,12 @@ namespace Minsk.CodeAnalysis.Binding
                 default:
                     throw new Exception($"Unexpected node ${node.Kind}");
             }
+        }
+
+        private static void WriteNopStatement(BoundNopStatement node, IndentedTextWriter writer)
+        {
+            writer.WriteKeyword("Nop");
+            writer.WriteLine();
         }
 
         private static void WriteReturnStatement(BoundReturnStatement node, IndentedTextWriter writer)

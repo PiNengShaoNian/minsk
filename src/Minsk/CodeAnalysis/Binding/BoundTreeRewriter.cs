@@ -30,9 +30,16 @@ namespace Minsk.CodeAnalysis.Binding
                     return RewriteDoWhileStatement((BoundDoWhileStatement)node);
                 case BoundNodeKind.ReturnStatement:
                     return RewriteReturnStatement((BoundReturnStatement)node);
+                case BoundNodeKind.NopStatement:
+                    return RewriteNopStatement((BoundNopStatement)node);
                 default:
                     throw new Exception($"Unexpected node: {node.Kind}");
             }
+        }
+
+        protected virtual BoundStatement RewriteNopStatement(BoundNopStatement node)
+        {
+            return node;
         }
 
         protected virtual BoundStatement RewriteReturnStatement(BoundReturnStatement node)

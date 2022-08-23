@@ -15,5 +15,7 @@ namespace Minsk.CodeAnalysis.Binding
         public override TypeSymbol Type => Variable.Type;
 
         public VariableSymbol Variable { get; }
+
+        public override BoundConstant ConstantValue => Variable.Constant;
     }
 }

@@ -79,6 +79,9 @@ namespace Minsk.CodeAnalysis
                         var rs = (BoundReturnStatement)s;
                         _lastValue = rs.Expression == null ? null : EvaluateExpression(rs.Expression);
                         return _lastValue;
+                    case BoundNodeKind.NopStatement:
+                        ++index;
+                        break;
                     default:
                         throw new Exception($"Unpexted statement ${s.Kind}");
                 }

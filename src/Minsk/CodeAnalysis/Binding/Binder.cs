@@ -380,13 +380,13 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundForStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
-        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol targetType)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol targetType, BoundConstant constant = null)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             VariableSymbol variable = _function == null ?
-                                          new GlobalVariableSymbol(name, isReadOnly, targetType) :
-                                          new LocalVariableSymbol(name, isReadOnly, targetType);
+                                          new GlobalVariableSymbol(name, isReadOnly, targetType, constant) :
+                                          new LocalVariableSymbol(name, isReadOnly, targetType, constant);
 
             if (declare && !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportVariableAlreadyDeclared(identifier.Location, name);
@@ -427,7 +427,7 @@ namespace Minsk.CodeAnalysis.Binding
             var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type != null ? type : initializer.Type;
-            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType, initializer.ConstantValue);
             var convertedInitializer = BindConversion(syntax.Initializer.Location, initializer, variableType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);

@@ -9,6 +9,7 @@ namespace Minsk.CodeAnalysis.Binding
             Left = left;
             Op = op;
             Right = right;
+            ConstantValue = ConstantFolding.ComputeConstant(left, op, right);
         }
 
         public override TypeSymbol Type => Op.Type;
@@ -18,5 +19,6 @@ namespace Minsk.CodeAnalysis.Binding
         public BoundExpression Left { get; }
         public BoundExpression Right { get; }
         public BoundBinaryOperator Op { get; }
+        public override BoundConstant ConstantValue { get; }
     }
 }
