@@ -23,7 +23,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
                 .Cast<SyntaxKind>()
-                .Where(k => k.ToString().EndsWith("Keyword") || k.ToString().EndsWith("Token"));
+                .Where(k => k.isToken());
             var testedTokenKinds = GetTokens().Concat(GetSeparators()).Select(t => t.kind);
             var untestedTokenKinds = new SortedSet<SyntaxKind>(tokenKinds);
             untestedTokenKinds.Remove(SyntaxKind.BadToken);
@@ -162,8 +162,8 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
         private static bool RequiresSeparator(SyntaxKind t1Kind, SyntaxKind t2Kind)
         {
-            var t1IsKeyword = t1Kind.ToString().EndsWith("Keyword");
-            var t2IsKeyword = t2Kind.ToString().EndsWith("Keyword");
+            var t1IsKeyword = t1Kind.isKeyWord();
+            var t2IsKeyword = t2Kind.isKeyWord();
 
             if (t1Kind == SyntaxKind.IdentifierToken && t2Kind == SyntaxKind.IdentifierToken)
                 return true;

@@ -187,5 +187,15 @@
                 }
             }
         }
+
+        public static bool isKeyWord(this SyntaxKind kind)
+        {
+            return kind.ToString().EndsWith("Keyword");
+        }
+
+        public static bool isToken(this SyntaxKind kind)
+        {
+            return kind.isKeyWord() || kind.ToString().EndsWith("Token");
+        }
     }
 }
