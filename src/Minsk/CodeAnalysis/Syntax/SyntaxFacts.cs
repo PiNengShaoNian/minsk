@@ -188,6 +188,20 @@
             }
         }
 
+        public static bool IsTrivia(this SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.WhitespaceTrivia:
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                case SyntaxKind.BadTokenTrivia:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static bool isKeyWord(this SyntaxKind kind)
         {
             return kind.ToString().EndsWith("Keyword");
@@ -195,7 +209,7 @@
 
         public static bool isToken(this SyntaxKind kind)
         {
-            return kind.isKeyWord() || kind.ToString().EndsWith("Token");
+            return !kind.IsTrivia() && (kind.isKeyWord() || kind.ToString().EndsWith("Token"));
         }
     }
 }

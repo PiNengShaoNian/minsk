@@ -26,7 +26,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 .Where(k => k.isToken());
             var testedTokenKinds = GetTokens().Concat(GetSeparators()).Select(t => t.kind);
             var untestedTokenKinds = new SortedSet<SyntaxKind>(tokenKinds);
-            untestedTokenKinds.Remove(SyntaxKind.BadToken);
+            untestedTokenKinds.Remove(SyntaxKind.BadTokenTrivia);
             untestedTokenKinds.Remove(SyntaxKind.EndOfFileToken);
             untestedTokenKinds.ExceptWith(testedTokenKinds);
             Assert.Empty(untestedTokenKinds);
@@ -127,10 +127,10 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.IdentifierToken,"abc"),
                 (SyntaxKind.StringToken, "\"Test\""),
                 (SyntaxKind.StringToken, "\"Tes\"\"t\""),
-                (SyntaxKind.SingleLineCommentToken, "//dsfsdaf"),
-                (SyntaxKind.SingleLineCommentToken, "// dsfsdaf"),
-                (SyntaxKind.MultiLineCommentToken, "/* dsfsdaf */"),
-                (SyntaxKind.MultiLineCommentToken, @"/* dsfsdaf
+                (SyntaxKind.SingleLineCommentTrivia, "//dsfsdaf"),
+                (SyntaxKind.SingleLineCommentTrivia, "// dsfsdaf"),
+                (SyntaxKind.MultiLineCommentTrivia, "/* dsfsdaf */"),
+                (SyntaxKind.MultiLineCommentTrivia, @"/* dsfsdaf
                      sdfsadf */"),
             };
 
@@ -141,12 +141,12 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             return new[]
             {
-                (SyntaxKind.WhitespaceToken, " "),
-                (SyntaxKind.WhitespaceToken, "  "),
-                (SyntaxKind.WhitespaceToken, "\r"),
-                (SyntaxKind.WhitespaceToken, "\n"),
-                (SyntaxKind.WhitespaceToken, "\r\n"),
-                (SyntaxKind.MultiLineCommentToken, "/* comment */"),
+                (SyntaxKind.WhitespaceTrivia, " "),
+                (SyntaxKind.WhitespaceTrivia, "  "),
+                (SyntaxKind.WhitespaceTrivia, "\r"),
+                (SyntaxKind.WhitespaceTrivia, "\n"),
+                (SyntaxKind.WhitespaceTrivia, "\r\n"),
+                (SyntaxKind.MultiLineCommentTrivia, "/* comment */"),
             };
         }
 
@@ -154,9 +154,9 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             return new[]
             {
-                (SyntaxKind.WhitespaceToken, "\r"),
-                (SyntaxKind.WhitespaceToken, "\n"),
-                (SyntaxKind.WhitespaceToken, "\r\n"),
+                (SyntaxKind.WhitespaceTrivia, "\r"),
+                (SyntaxKind.WhitespaceTrivia, "\n"),
+                (SyntaxKind.WhitespaceTrivia, "\r\n"),
             };
         }
 
@@ -223,10 +223,10 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 return true;
 
             if (t1Kind == SyntaxKind.SlashToken
-                && (t2Kind == SyntaxKind.StarToken || t2Kind == SyntaxKind.SlashToken || t2Kind == SyntaxKind.SingleLineCommentToken || t2Kind == SyntaxKind.MultiLineCommentToken))
+                && (t2Kind == SyntaxKind.StarToken || t2Kind == SyntaxKind.SlashToken || t2Kind == SyntaxKind.SingleLineCommentTrivia || t2Kind == SyntaxKind.MultiLineCommentTrivia))
                 return true;
 
-            if (t1Kind == SyntaxKind.SingleLineCommentToken)
+            if (t1Kind == SyntaxKind.SingleLineCommentTrivia)
                 return true;
 
             return false;
@@ -252,7 +252,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
             foreach (var t1 in GetTokens())
             {
-                var separators = t1.kind == SyntaxKind.SingleLineCommentToken ? GetSingleLineCommentSeparators()
+                var separators = t1.kind == SyntaxKind.SingleLineCommentTrivia ? GetSingleLineCommentSeparators()
                        : GetSeparators();
                 foreach (var t2 in GetTokens())
                 {
