@@ -239,8 +239,37 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private void ReadMultiLineComment()
         {
+            _position += 2;
+            var done = false;
+
+            while (!done)
+            {
+                switch (Current)
+                {
+                    case '\0':
+                        var span = new TextSpan(_start, 2);
+                        var location = new TextLocation(_text, span);
+                        _diagnostics.ReportUnterminatedMultiLineComment(location);
+                        done = true;
+                        break;
+                    case '*':
+                        if (Lookahead == '/')
+                        {
+                            done = true;
+                            _position += 2;
+                        }
+                        else
+                        {
+                            ++_position;
+                        }
+                        break;
+                    default:
+                        ++_position;
+                        break;
+                }
+            }
+
             _kind = SyntaxKind.MultiLineCommentToken;
-            throw new NotImplementedException();
         }
 
         private void ReadSingleLineComment()

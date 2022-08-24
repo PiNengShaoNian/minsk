@@ -126,7 +126,12 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.IdentifierToken,"a"),
                 (SyntaxKind.IdentifierToken,"abc"),
                 (SyntaxKind.StringToken, "\"Test\""),
-                (SyntaxKind.StringToken, "\"Tes\"\"t\"")
+                (SyntaxKind.StringToken, "\"Tes\"\"t\""),
+                (SyntaxKind.SingleLineCommentToken, "//dsfsdaf"),
+                (SyntaxKind.SingleLineCommentToken, "// dsfsdaf"),
+                (SyntaxKind.MultiLineCommentToken, "/* dsfsdaf */"),
+                (SyntaxKind.MultiLineCommentToken, @"/* dsfsdaf
+                     sdfsadf */"),
             };
 
             return fixedTokens.Concat(dynamicTokens);
@@ -138,6 +143,16 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             {
                 (SyntaxKind.WhitespaceToken, " "),
                 (SyntaxKind.WhitespaceToken, "  "),
+                (SyntaxKind.WhitespaceToken, "\r"),
+                (SyntaxKind.WhitespaceToken, "\n"),
+                (SyntaxKind.WhitespaceToken, "\r\n"),
+            };
+        }
+
+        public static IEnumerable<(SyntaxKind kind, string text)> GetSingleLineCommentSeparators()
+        {
+            return new[]
+            {
                 (SyntaxKind.WhitespaceToken, "\r"),
                 (SyntaxKind.WhitespaceToken, "\n"),
                 (SyntaxKind.WhitespaceToken, "\r\n"),
@@ -185,7 +200,6 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             if (t1Kind == SyntaxKind.LessToken && t2Kind == SyntaxKind.EqualsToken)
                 return true;
 
-
             if (t1Kind == SyntaxKind.GreaterToken && t2Kind == SyntaxKind.EqualsToken)
                 return true;
 
@@ -205,6 +219,13 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 return true;
 
             if ((t1Kind == SyntaxKind.IdentifierToken || t1IsKeyword) && t2Kind == SyntaxKind.NumberToken)
+                return true;
+
+            if (t1Kind == SyntaxKind.SlashToken
+                && (t2Kind == SyntaxKind.StarToken || t2Kind == SyntaxKind.SlashToken || t2Kind == SyntaxKind.SingleLineCommentToken || t2Kind == SyntaxKind.MultiLineCommentToken))
+                return true;
+
+            if (t1Kind == SyntaxKind.SingleLineCommentToken)
                 return true;
 
             return false;
@@ -230,11 +251,13 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
             foreach (var t1 in GetTokens())
             {
+                var separators = t1.kind == SyntaxKind.SingleLineCommentToken ? GetSingleLineCommentSeparators()
+                       : GetSeparators();
                 foreach (var t2 in GetTokens())
                 {
                     if (RequiresSeparator(t1.kind, t2.kind))
                     {
-                        foreach (var s in GetSeparators())
+                        foreach (var s in separators)
                         {
                             yield return (t1.kind, t1.text, s.kind, s.text, t2.kind, t2.text);
                         }

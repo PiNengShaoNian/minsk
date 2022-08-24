@@ -60,16 +60,18 @@ namespace Minsk
             }
         }
 
+        private delegate object LineRenderHandler(IReadOnlyList<string> lines, int lineIndex, object state);
+
         private sealed class SubmissionView
         {
-            private readonly Action<string> _lineRender;
+            private readonly LineRenderHandler _lineRender;
             private readonly ObservableCollection<string> _submissionDocument;
             private int _cursorTop;
             private int _renderedLineCount;
             private int _currentLineIndex;
             private int _currentCharacter;
 
-            public SubmissionView(Action<string> lineRender, ObservableCollection<string> submissionDocument)
+            public SubmissionView(LineRenderHandler lineRender, ObservableCollection<string> submissionDocument)
             {
                 _lineRender = lineRender;
                 _submissionDocument = submissionDocument;
@@ -87,6 +89,7 @@ namespace Minsk
             {
                 Console.CursorVisible = false;
                 var lineCount = 0;
+                var state = (object)null;
 
                 foreach (var line in _submissionDocument)
                 {
@@ -108,7 +111,7 @@ namespace Minsk
 
                     Console.ResetColor();
 
-                    _lineRender(line);
+                    state = _lineRender(_submissionDocument, lineCount, state);
 
                     Console.Write(new string(' ', Console.WindowWidth - line.Length - 2));
                     ++lineCount;
@@ -439,9 +442,10 @@ namespace Minsk
             _submissionHistory.Clear();
         }
 
-        protected virtual void RenderLine(string line)
+        protected virtual object RenderLine(IReadOnlyList<string> lines, int lineIndex, object state)
         {
-            Console.Write(line);
+            Console.Write(lines[lineIndex]);
+            return state;
         }
 
         private void EvaluateMetaCommand(string input)

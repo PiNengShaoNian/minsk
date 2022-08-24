@@ -235,5 +235,11 @@ namespace Minsk.CodeAnalysis
             var message = $"The required method '{typeName}.{methodName}({parameterTypeNameList})' cannot be resolved amont the given references.";
             Report(default, message);
         }
+
+        internal void ReportUnterminatedMultiLineComment(TextLocation location)
+        {
+            var message = $"Unterminated multi-line comment.";
+            Report(location, message);
+        }
     }
 }
