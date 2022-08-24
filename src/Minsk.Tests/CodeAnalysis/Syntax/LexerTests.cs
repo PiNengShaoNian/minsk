@@ -146,6 +146,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.WhitespaceToken, "\r"),
                 (SyntaxKind.WhitespaceToken, "\n"),
                 (SyntaxKind.WhitespaceToken, "\r\n"),
+                (SyntaxKind.MultiLineCommentToken, "/* comment */"),
             };
         }
 
@@ -259,7 +260,8 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                     {
                         foreach (var s in separators)
                         {
-                            yield return (t1.kind, t1.text, s.kind, s.text, t2.kind, t2.text);
+                            if (!RequiresSeparator(t1.kind, s.kind) && !RequiresSeparator(s.kind, t2.kind))
+                                yield return (t1.kind, t1.text, s.kind, s.text, t2.kind, t2.text);
                         }
                     }
                 }
