@@ -68,7 +68,6 @@ namespace Minsk.CodeAnalysis.Emit
 
             TypeReference ResolveType(string minskName, string metadataName)
             {
-
                 TypeReference typeReference;
                 var foundTypes = asseblies.SelectMany(a => a.Modules)
                                               .SelectMany(m => m.Types)
@@ -148,8 +147,6 @@ namespace Minsk.CodeAnalysis.Emit
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new[] { "System.Int32" });
             _randomReference = ResolveType(null, "System.Random");
-
-
         }
 
         public static ImmutableArray<Diagnostic> Emit(BoundProgram program, string moduleName, string[] references, string outputPath)
