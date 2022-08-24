@@ -70,8 +70,19 @@ namespace Minsk.CodeAnalysis.Syntax
                     ++_position;
                     break;
                 case '/':
-                    _kind = SyntaxKind.SlashToken;
-                    ++_position;
+                    if (Lookahead == '/')
+                    {
+                        ReadSingleLineComment();
+                    }
+                    else if (Lookahead == '*')
+                    {
+                        ReadMultiLineComment();
+                    }
+                    else
+                    {
+                        _kind = SyntaxKind.SlashToken;
+                        ++_position;
+                    }
                     break;
                 case '(':
                     _kind = SyntaxKind.OpenParenthesisToken;
@@ -224,6 +235,36 @@ namespace Minsk.CodeAnalysis.Syntax
                 text = _text.ToString(_start, length);
 
             return new SyntaxToken(_syntaxTree, _kind, _start, text, _value);
+        }
+
+        private void ReadMultiLineComment()
+        {
+            _kind = SyntaxKind.MultiLineCommentToken;
+            throw new NotImplementedException();
+        }
+
+        private void ReadSingleLineComment()
+        {
+            // Skip leading slashes
+            _position += 2;
+            var done = false;
+
+            while (!done)
+            {
+                switch (Current)
+                {
+                    case '\r':
+                    case '\n':
+                    case '\0':
+                        done = true;
+                        break;
+                    default:
+                        ++_position;
+                        break;
+                }
+            }
+
+            _kind = SyntaxKind.SingleLineCommentToken;
         }
 
         private void ReadString()
