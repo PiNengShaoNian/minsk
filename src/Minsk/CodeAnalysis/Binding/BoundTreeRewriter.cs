@@ -270,5 +270,4 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundAssignmentExpression(node.Variable, expression);
         }
     }
-
 }
