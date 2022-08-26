@@ -7,7 +7,9 @@ function main() {
     var f = a + b + c
     var g = a + b + c + d
     var h = a + b + c + d + "5"
+    var i = "a" + "b" + a + "c" + "d" + b + "e"
     print(h)
+    print(i)
 }
 
 function readLine(prompt: string): string {
