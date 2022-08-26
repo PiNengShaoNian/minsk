@@ -1,6 +1,6 @@
 ﻿using Minsk.CodeAnalysis.Symbols;
 using Minsk.CodeAnalysis.Text;
-using System;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace Minsk.CodeAnalysis.Syntax
@@ -14,6 +14,7 @@ namespace Minsk.CodeAnalysis.Syntax
         private SyntaxKind _kind;
         private int _start;
         private object _value;
+        private ImmutableArray<SyntaxTrivia>.Builder _triviaBuilder = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
         public Lexer(SyntaxTree syntaxTree)
         {
@@ -48,8 +49,87 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public SyntaxToken Lex()
         {
+            ReadTrivia(leading: true);
+            var leadingTrivia = _triviaBuilder.ToImmutable();
+            var tokenStart = _position;
+
+            ReadToken();
+
+            var tokenKind = _kind;
+            var tokenValue = _value;
+            var tokenLength = _position - _start;
+
+            ReadTrivia(leading: false);
+            var trailingTrivia = _triviaBuilder.ToImmutable();
+
+            var text = SyntaxFacts.GetText(tokenKind);
+            if (text == null)
+                text = _text.ToString(tokenStart, tokenLength);
+
+            return new SyntaxToken(_syntaxTree, tokenKind, tokenStart, text, tokenValue, leadingTrivia, trailingTrivia);
+        }
+
+        private void ReadTrivia(bool leading)
+        {
+            _triviaBuilder.Clear();
+            var done = false;
+
+            while (!done)
+            {
+                _start = _position;
+                _kind = SyntaxKind.BadToken;
+                _value = null;
+
+                switch (Current)
+                {
+                    case '\0':
+                        done = true;
+                        break;
+                    case '/':
+                        if (Lookahead == '/')
+                            ReadSingleLineComment();
+                        else if (Lookahead == '*')
+                            ReadMultiLineComment();
+                        else
+                            done = true;
+                        break;
+                    case ' ':
+                    case '\t':
+                        ReadWhiteSpace();
+                        break;
+                    case '\r':
+                    case '\n':
+                        if (!leading)
+                            done = true;
+                        ReadLineBreak();
+                        break;
+                    default:
+                        if (char.IsWhiteSpace(Current))
+                        {
+                            ReadWhiteSpace();
+                        }
+                        else
+                        {
+                            done = true;
+                        }
+                        break;
+                }
+
+                var length = _position - _start;
+
+                if (length > 0)
+                {
+                    var text = _text.ToString(_start, length);
+                    var trivia = new SyntaxTrivia(_syntaxTree, _kind, _start, text);
+                    _triviaBuilder.Add(trivia);
+                }
+            }
+        }
+
+        private void ReadToken()
+        {
             _start = _position;
-            _kind = SyntaxKind.BadTokenTrivia;
+            _kind = SyntaxKind.BadToken;
             _value = null;
 
             switch (Current)
@@ -70,19 +150,8 @@ namespace Minsk.CodeAnalysis.Syntax
                     ++_position;
                     break;
                 case '/':
-                    if (Lookahead == '/')
-                    {
-                        ReadSingleLineComment();
-                    }
-                    else if (Lookahead == '*')
-                    {
-                        ReadMultiLineComment();
-                    }
-                    else
-                    {
-                        _kind = SyntaxKind.SlashToken;
-                        ++_position;
-                    }
+                    _kind = SyntaxKind.SlashToken;
+                    ++_position;
                     break;
                 case '(':
                     _kind = SyntaxKind.OpenParenthesisToken;
@@ -203,12 +272,6 @@ namespace Minsk.CodeAnalysis.Syntax
                 case '9':
                     ReadNumberToken();
                     break;
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                    ReadWhiteSpace();
-                    break;
                 case '_':
                     ReadIdentifierOrKeyword();
                     break;
@@ -228,13 +291,6 @@ namespace Minsk.CodeAnalysis.Syntax
                         break;
                     }
             }
-
-            var length = _position - _start;
-            var text = SyntaxFacts.GetText(_kind);
-            if (text == null)
-                text = _text.ToString(_start, length);
-
-            return new SyntaxToken(_syntaxTree, _kind, _start, text, _value);
         }
 
         private void ReadMultiLineComment()
@@ -352,10 +408,42 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private void ReadWhiteSpace()
         {
-            while (char.IsWhiteSpace(Current))
-                Next();
+            var done = false;
+            while (!done)
+            {
+                switch (Current)
+                {
+                    case '\0':
+                        done = true;
+                        break;
+                    case '\r':
+                    case '\n':
+                        done = true;
+                        break;
+                    default:
+                        if (!char.IsWhiteSpace(Current))
+                            done = true;
+                        else
+                            ++_position;
+                        break;
+                }
+            }
 
             _kind = SyntaxKind.WhitespaceTrivia;
+        }
+
+        private void ReadLineBreak()
+        {
+            if (Current == '\r' && Lookahead == '\n')
+            {
+                _position += 2;
+            }
+            else
+            {
+                _position++;
+            }
+
+            _kind = SyntaxKind.LineBreakTrivia;
         }
 
         private void ReadNumberToken()

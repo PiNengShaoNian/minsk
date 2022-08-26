@@ -195,7 +195,8 @@
                 case SyntaxKind.WhitespaceTrivia:
                 case SyntaxKind.SingleLineCommentTrivia:
                 case SyntaxKind.MultiLineCommentTrivia:
-                case SyntaxKind.BadTokenTrivia:
+                case SyntaxKind.LineBreakTrivia:
+                case SyntaxKind.SkippedTextTrivia:
                     return true;
                 default:
                     return false;
