@@ -211,5 +211,10 @@
         {
             return !kind.IsTrivia() && (kind.isKeyWord() || kind.ToString().EndsWith("Token"));
         }
+
+        public static bool isComment(this SyntaxKind kind)
+        {
+            return kind == SyntaxKind.SingleLineCommentTrivia || kind == SyntaxKind.MultiLineCommentTrivia;
+        }
     }
 }

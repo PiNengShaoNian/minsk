@@ -16,7 +16,10 @@ namespace Minsk.CodeAnalysis.Emit
         private readonly AssemblyDefinition _assemblyDefinition;
         private readonly MethodReference _consoleWriteLineReference;
         private readonly MethodReference _consoleReadLineReference;
-        private readonly MethodReference _stringConcatReference;
+        private readonly MethodReference _stringConcat2Reference;
+        private readonly MethodReference _stringConcat3Reference;
+        private readonly MethodReference _stringConcat4Reference;
+        private readonly MethodReference _stringConcatArrayReference;
         private readonly MethodReference _convertToBooleanReference;
         private readonly MethodReference _convertToInt32Reference;
         private readonly MethodReference _convertToStringReference;
@@ -139,7 +142,12 @@ namespace Minsk.CodeAnalysis.Emit
 
             _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new[] { "System.Object" });
             _consoleReadLineReference = ResolveMethod("System.Console", "ReadLine", Array.Empty<string>());
-            _stringConcatReference = ResolveMethod("System.String", "Concat", new[] { "System.String", "System.String" });
+
+            _stringConcat2Reference = ResolveMethod("System.String", "Concat", new[] { "System.String", "System.String" });
+            _stringConcat3Reference = ResolveMethod("System.String", "Concat", new[] { "System.String", "System.String", "System.String" });
+            _stringConcat4Reference = ResolveMethod("System.String", "Concat", new[] { "System.String", "System.String", "System.String", "System.String" });
+            _stringConcatArrayReference = ResolveMethod("System.String", "Concat", new[] { "System.String[]" });
+
             _convertToBooleanReference = ResolveMethod("System.Convert", "ToBoolean", new[] { "System.Object" });
             _convertToInt32Reference = ResolveMethod("System.Convert", "ToInt32", new[] { "System.Object" });
             _convertToStringReference = ResolveMethod("System.Convert", "ToString", new[] { "System.Object" });
@@ -396,17 +404,17 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitBinaryExpression(ILProcessor ilProcessor, BoundBinaryExpression node)
         {
-            EmitExpression(ilProcessor, node.Left);
-            EmitExpression(ilProcessor, node.Right);
-
             if (node.Op.Kind == BoundBinaryOperatorKind.Addition)
             {
                 if (node.Left.Type == TypeSymbol.String && node.Right.Type == TypeSymbol.String)
                 {
-                    ilProcessor.Emit(OpCodes.Call, _stringConcatReference);
+                    EmitStringConcatExpression(ilProcessor, node);
                     return;
                 }
             }
+
+            EmitExpression(ilProcessor, node.Left);
+            EmitExpression(ilProcessor, node.Right);
 
             if (node.Op.Kind == BoundBinaryOperatorKind.Equals)
             {
@@ -483,6 +491,73 @@ namespace Minsk.CodeAnalysis.Emit
                     break;
                 default:
                     throw new Exception($"Unexpected binary oeprator {node.Left.Type} {SyntaxFacts.GetText(node.Op.SyntaxKind)} {node.Right.Type}");
+            }
+        }
+
+        private void EmitStringConcatExpression(ILProcessor ilProcessor, BoundBinaryExpression node)
+        {
+            var nodes = Flatten(node).ToList();
+
+            switch (nodes.Count)
+            {
+                case 2:
+                    EmitExpression(ilProcessor, nodes[0]);
+                    EmitExpression(ilProcessor, nodes[1]);
+                    ilProcessor.Emit(OpCodes.Call, _stringConcat2Reference);
+                    break;
+                case 3:
+                    EmitExpression(ilProcessor, nodes[0]);
+                    EmitExpression(ilProcessor, nodes[1]);
+                    EmitExpression(ilProcessor, nodes[2]);
+                    ilProcessor.Emit(OpCodes.Call, _stringConcat3Reference);
+                    break;
+                case 4:
+                    EmitExpression(ilProcessor, nodes[0]);
+                    EmitExpression(ilProcessor, nodes[1]);
+                    EmitExpression(ilProcessor, nodes[2]);
+                    EmitExpression(ilProcessor, nodes[3]);
+                    ilProcessor.Emit(OpCodes.Call, _stringConcat4Reference);
+                    break;
+                default:
+                    ilProcessor.Emit(OpCodes.Ldc_I4, nodes.Count);
+                    ilProcessor.Emit(OpCodes.Newarr, _knownTypes[TypeSymbol.String]);
+
+                    for (var i = 0; i < nodes.Count; ++i)
+                    {
+                        ilProcessor.Emit(OpCodes.Dup);
+                        ilProcessor.Emit(OpCodes.Ldc_I4, i);
+                        EmitExpression(ilProcessor, nodes[i]);
+                        ilProcessor.Emit(OpCodes.Stelem_Ref);
+                    }
+
+                    ilProcessor.Emit(OpCodes.Call, _stringConcatArrayReference);
+                    break;
+            }
+        }
+
+        private static IEnumerable<BoundExpression> Flatten(BoundExpression node)
+        {
+            if (node is BoundBinaryExpression binaryExpression &&
+                binaryExpression.Op.Kind == BoundBinaryOperatorKind.Addition &&
+                binaryExpression.Left.Type == TypeSymbol.String &&
+                binaryExpression.Right.Type == TypeSymbol.String)
+            {
+                foreach (var result in Flatten(binaryExpression.Left))
+                {
+                    yield return result;
+                }
+
+                foreach (var result in Flatten(binaryExpression.Right))
+                {
+                    yield return result;
+                }
+            }
+            else
+            {
+                if (node.Type != TypeSymbol.String)
+                    throw new Exception($"Unexpected node type in string concatenation: {node.Type}");
+
+                yield return node;
             }
         }
 

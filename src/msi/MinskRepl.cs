@@ -65,7 +65,8 @@ namespace Minsk
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
                 var isIdentifer = token.Kind == SyntaxKind.IdentifierToken;
                 var isString = token.Kind == SyntaxKind.StringToken;
-                var isComment = token.Kind == SyntaxKind.SingleLineCommentTrivia || token.Kind == SyntaxKind.MultiLineCommentTrivia;
+                var isComment = token.Kind.isComment();
+
                 if (isKeyword)
                     Console.ForegroundColor = ConsoleColor.Blue;
                 else if (isNumber)
