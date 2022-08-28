@@ -229,7 +229,7 @@ namespace Minsk.CodeAnalysis.Lowering
             var upperBoundVarialbeDeclaration = new BoundVariableDeclaration(upperBoundVarialbe, node.UpperBound);
             var condition = new BoundBinaryExpression(
                     lowerBoundVariableExpression,
-                    BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, TypeSymbol.Int, TypeSymbol.Int),
+                    BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, TypeSymbol.Int, TypeSymbol.Int)!,
                     new BoundVariableExpression(upperBoundVarialbe)
                 );
             var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
@@ -238,7 +238,7 @@ namespace Minsk.CodeAnalysis.Lowering
                         node.Variable,
                         new BoundBinaryExpression(
                             lowerBoundVariableExpression,
-                            BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int),
+                            BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int)!,
                             new BoundLiteralExpression(1)
                         )
                     )

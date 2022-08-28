@@ -152,7 +152,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.StringToken, "\"Tes\"\"t\""),
             };
 
-            return fixedTokens.Concat(dynamicTokens);
+            return fixedTokens!.Concat(dynamicTokens);
         }
 
         public static IEnumerable<(SyntaxKind kind, string text)> GetSeparators()

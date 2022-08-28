@@ -208,7 +208,7 @@ namespace Minsk.CodeAnalysis
             Report(default, message);
         }
 
-        internal void ReportRequiredTypeNotFound(string minskName, string metadataName)
+        internal void ReportRequiredTypeNotFound(string? minskName, string metadataName)
         {
             var message =
                 minskName != null ?
@@ -217,7 +217,7 @@ namespace Minsk.CodeAnalysis
             Report(default, message);
         }
 
-        internal void ReportRequiredTypeAmbigous(string minskName, string metadataName, TypeDefinition[] foundTypes)
+        internal void ReportRequiredTypeAmbigous(string? minskName, string metadataName, TypeDefinition[] foundTypes)
         {
             var assemblyNames = foundTypes.Select(t => t.Module.Assembly.Name.Name);
             var assemblyNameList = String.Join(", ", assemblyNames);

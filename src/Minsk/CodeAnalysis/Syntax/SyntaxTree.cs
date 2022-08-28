@@ -21,7 +21,6 @@ namespace Minsk.CodeAnalysis.Syntax
         public SourceText Text { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
         public CompilationUnitSyntax Root { get; }
-        public SyntaxToken EndOfFileToken { get; }
 
         public static SyntaxTree Load(string fileName)
         {
@@ -69,7 +68,7 @@ namespace Minsk.CodeAnalysis.Syntax
             void ParseTokens(SyntaxTree syntaxTree, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> diagnostics)
             {
                 var lexer = new Lexer(syntaxTree);
-                root = null;
+                root = null!;
 
                 while (true)
                 {

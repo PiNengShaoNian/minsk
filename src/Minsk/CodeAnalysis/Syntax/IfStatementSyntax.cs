@@ -7,7 +7,7 @@
             SyntaxTree syntaxTree,
             SyntaxToken ifKeyword, ExpressionSyntax condition,
            StatementSyntax thenStatement,
-           ElseClauseSyntax elseClause
+           ElseClauseSyntax? elseClause
            ): base(syntaxTree)
         {
             IfKeyword = ifKeyword;
@@ -19,7 +19,7 @@
         public SyntaxToken IfKeyword { get; }
         public ExpressionSyntax Condition { get; }
         public StatementSyntax ThenStatement { get; }
-        public ElseClauseSyntax ElseClause { get; }
+        public ElseClauseSyntax? ElseClause { get; }
 
         public override SyntaxKind Kind => SyntaxKind.IfStatement;
     }

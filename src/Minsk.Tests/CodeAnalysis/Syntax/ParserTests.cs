@@ -17,8 +17,8 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             var op1Precedence = SyntaxFacts.GetBinaryOperatorPrecedence(op1);
             var op2Precedence = SyntaxFacts.GetBinaryOperatorPrecedence(op2);
-            var op1Text = SyntaxFacts.GetText(op1);
-            var op2Text = SyntaxFacts.GetText(op2);
+            var op1Text = SyntaxFacts.GetText(op1)!;
+            var op2Text = SyntaxFacts.GetText(op2)!;
 
             var text = $"a {op1Text} b {op2Text} c";
             var expression = ParseExpression(text);
@@ -84,8 +84,8 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             var unaryPrecedence = SyntaxFacts.getUnaryOperatorPrecedence(unaryKind);
             var binaryPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(binaryKind);
-            var unaryText = SyntaxFacts.GetText(unaryKind);
-            var binaryText = SyntaxFacts.GetText(binaryKind);
+            var unaryText = SyntaxFacts.GetText(unaryKind)!;
+            var binaryText = SyntaxFacts.GetText(binaryKind)!;
 
             var text = $"{unaryText} a {binaryText} b";
             var expression = ParseExpression(text);

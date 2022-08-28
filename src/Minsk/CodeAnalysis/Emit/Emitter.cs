@@ -6,6 +6,7 @@ using Mono.Cecil.Rocks;
 using System.Collections.Immutable;
 using Minsk.CodeAnalysis.Syntax;
 using System.Text;
+using System.Diagnostics;
 
 namespace Minsk.CodeAnalysis.Emit
 {
@@ -32,8 +33,9 @@ namespace Minsk.CodeAnalysis.Emit
         private readonly Dictionary<VariableSymbol, VariableDefinition> _locals = new Dictionary<VariableSymbol, VariableDefinition>();
         private readonly List<(int InstructionIndex, BoundLabel Target)> _fixups = new List<(int InstructionIndex, BoundLabel Target)>();
         private readonly Dictionary<BoundLabel, int> _labels = new Dictionary<BoundLabel, int>();
+
         private TypeDefinition _typeDefinition;
-        private FieldDefinition _randomFieldDefinition;
+        private FieldDefinition? _randomFieldDefinition;
 
         private Emitter(string moduleName, string[] references)
         {
@@ -70,7 +72,7 @@ namespace Minsk.CodeAnalysis.Emit
                 _knownTypes.Add(typeSymbol, typeReference);
             }
 
-            TypeReference ResolveType(string minskName, string metadataName)
+            TypeReference ResolveType(string? minskName, string metadataName)
             {
                 TypeReference typeReference;
                 var foundTypes = asseblies.SelectMany(a => a.Modules)
@@ -91,7 +93,7 @@ namespace Minsk.CodeAnalysis.Emit
                     _diagnostics.ReportRequiredTypeAmbigous(minskName, metadataName, foundTypes);
                 }
 
-                return null;
+                return null!;
             }
 
             MethodReference ResolveMethod(string typeName, string methodName, string[] parameterTypeNames)
@@ -127,7 +129,6 @@ namespace Minsk.CodeAnalysis.Emit
                     }
 
                     _diagnostics.ReportRequiredMethodNotFound(typeName, methodName, parameterTypeNames);
-                    return null;
                 }
                 else if (foundTypes.Length == 0)
                 {
@@ -138,7 +139,7 @@ namespace Minsk.CodeAnalysis.Emit
                     _diagnostics.ReportRequiredTypeAmbigous(null, typeName, foundTypes);
                 }
 
-                return null;
+                return null!;
             }
 
             _consoleWriteLineReference = ResolveMethod("System.Console", "WriteLine", new[] { "System.Object" });
@@ -156,6 +157,21 @@ namespace Minsk.CodeAnalysis.Emit
             _randomCtorReference = ResolveMethod("System.Random", ".ctor", Array.Empty<string>());
             _randomNextReference = ResolveMethod("System.Random", "Next", new[] { "System.Int32" });
             _randomReference = ResolveType(null, "System.Random");
+
+            var objectType = _knownTypes[TypeSymbol.Any];
+            if (objectType != null)
+            {
+                _typeDefinition = new TypeDefinition(
+                    "",
+                    "Program",
+                    TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public,
+                    objectType);
+                _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
+            }
+            else
+            {
+                _typeDefinition = null!;
+            }
         }
 
         public static ImmutableArray<Diagnostic> Emit(BoundProgram program, string moduleName, string[] references, string outputPath)
@@ -173,14 +189,6 @@ namespace Minsk.CodeAnalysis.Emit
             {
                 return _diagnostics.ToImmutableArray();
             }
-
-            var objectType = _knownTypes[TypeSymbol.Any];
-            _typeDefinition = new TypeDefinition(
-                "",
-                "Program",
-                TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.Public,
-                objectType);
-            _assemblyDefinition.MainModule.Types.Add(_typeDefinition);
 
             foreach (var functionWithBody in program.Functions)
                 EmitFunctionDeclaration(functionWithBody.Key);
@@ -381,6 +389,8 @@ namespace Minsk.CodeAnalysis.Emit
 
         private void EmitConstantExpression(ILProcessor ilProcessor, BoundExpression node)
         {
+            Debug.Assert(node.ConstantValue != null);
+
             if (node.Type == TypeSymbol.Int)
             {
                 var value = (int)node.ConstantValue.Value;
@@ -548,7 +558,7 @@ namespace Minsk.CodeAnalysis.Emit
 
         private IEnumerable<BoundExpression> FlodConstants(IEnumerable<BoundExpression> nodes)
         {
-            StringBuilder sb = null;
+            StringBuilder? sb = null;
 
             foreach (var node in nodes)
             {

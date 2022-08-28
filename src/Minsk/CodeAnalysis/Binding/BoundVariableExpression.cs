@@ -16,6 +16,6 @@ namespace Minsk.CodeAnalysis.Binding
 
         public VariableSymbol Variable { get; }
 
-        public override BoundConstant ConstantValue => Variable.Constant;
+        public override BoundConstant? ConstantValue => Variable.Constant;
     }
 }

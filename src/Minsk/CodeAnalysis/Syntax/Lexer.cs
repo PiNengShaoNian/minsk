@@ -13,7 +13,7 @@ namespace Minsk.CodeAnalysis.Syntax
         private int _position;
         private SyntaxKind _kind;
         private int _start;
-        private object _value;
+        private object? _value;
         private ImmutableArray<SyntaxTrivia>.Builder _triviaBuilder = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
         public Lexer(SyntaxTree syntaxTree)

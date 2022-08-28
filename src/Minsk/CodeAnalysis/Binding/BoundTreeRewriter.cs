@@ -44,7 +44,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteReturnStatement(BoundReturnStatement node)
         {
-            BoundExpression expression = node.Expression == null ? null : RewriteExpression(node.Expression);
+            BoundExpression? expression = node.Expression == null ? null : RewriteExpression(node.Expression);
 
             if (expression == node.Expression)
                 return node;
@@ -137,7 +137,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteBlockStatement(BoundBlockStatement node)
         {
-            ImmutableArray<BoundStatement>.Builder buider = null;
+            ImmutableArray<BoundStatement>.Builder? buider = null;
 
             for (var i = 0; i < node.Statements.Length; ++i)
             {
@@ -200,7 +200,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         protected virtual BoundExpression RewriteCallExpression(BoundCallExpression node)
         {
-            ImmutableArray<BoundExpression>.Builder buider = null;
+            ImmutableArray<BoundExpression>.Builder? buider = null;
 
             for (var i = 0; i < node.Arguments.Length; ++i)
             {

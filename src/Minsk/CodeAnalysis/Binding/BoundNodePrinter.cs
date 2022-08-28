@@ -239,7 +239,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         private static void WriteUnaryExpression(BoundUnaryExpression node, IndentedTextWriter writer)
         {
-            var op = SyntaxFacts.GetText(node.Op.SyntaxKind);
+            var op = SyntaxFacts.GetText(node.Op.SyntaxKind)!;
             var precedence = node.Op.SyntaxKind.getUnaryOperatorPrecedence();
 
             writer.WritePunctuation(op);
@@ -248,7 +248,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         private static void WriteLiteralExpression(BoundLiteralExpression node, IndentedTextWriter writer)
         {
-            var value = node.Value.ToString();
+            var value = node.Value.ToString()!;
             if (node.Type == TypeSymbol.Bool)
                 writer.WriteKeyword(value);
             else if (node.Type == TypeSymbol.Int)

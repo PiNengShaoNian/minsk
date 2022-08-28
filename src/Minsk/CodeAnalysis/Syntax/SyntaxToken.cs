@@ -9,14 +9,15 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxToken(SyntaxTree syntaxTree,
             SyntaxKind kind,
             int position,
-            string text,
-            object value,
+            string? text,
+            object? value,
             ImmutableArray<SyntaxTrivia> leadingTrivia,
             ImmutableArray<SyntaxTrivia> trailingTrivia) : base(syntaxTree)
         {
             Kind = kind;
             Position = position;
-            Text = text;
+            Text = text ?? String.Empty;
+            IsMissing = text == null;
             Value = value;
             LeadingTrivia = leadingTrivia;
             TrailingTrivia = trailingTrivia;
@@ -25,8 +26,8 @@ namespace Minsk.CodeAnalysis.Syntax
         public override SyntaxKind Kind { get; }
         public int Position { get; }
         public string Text { get; }
-        public object Value { get; }
-        public override TextSpan Span => new TextSpan(Position, Text?.Length ?? 0);
+        public object? Value { get; }
+        public override TextSpan Span => new TextSpan(Position, Text.Length);
         public override TextSpan FullSpan
         {
             get
@@ -40,6 +41,6 @@ namespace Minsk.CodeAnalysis.Syntax
         public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
         public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
-        public bool IsMissing => Text == null;
+        public bool IsMissing { get; }
     }
 }
