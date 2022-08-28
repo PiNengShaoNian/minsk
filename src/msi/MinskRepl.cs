@@ -9,7 +9,7 @@ namespace Minsk
 {
     internal sealed class MinskRepl : Repl
     {
-        private Compilation _previous;
+        private Compilation? _previous;
         private static bool _loadingSubmission;
         private static readonly Compilation emptyCompilation = Compilation.CreateScript(null);
         private bool _showTree;
@@ -21,7 +21,7 @@ namespace Minsk
             LoadSubmissions();
         }
 
-        protected override object RenderLine(IReadOnlyList<string> lines, int lineIndex, object state)
+        protected override object? RenderLine(IReadOnlyList<string> lines, int lineIndex, object? state)
         {
             SyntaxTree syntaxTree;
             if (state == null)

@@ -60,7 +60,7 @@ namespace Minsk
             }
         }
 
-        private delegate object LineRenderHandler(IReadOnlyList<string> lines, int lineIndex, object state);
+        private delegate object? LineRenderHandler(IReadOnlyList<string> lines, int lineIndex, object? state);
 
         private sealed class SubmissionView
         {
@@ -75,7 +75,7 @@ namespace Minsk
             {
                 _lineRender = lineRender;
                 _submissionDocument = submissionDocument;
-                _submissionDocument.CollectionChanged += SubmissionDocumentChanged;
+                _submissionDocument.CollectionChanged += SubmissionDocumentChanged!;
                 _cursorTop = Console.CursorTop;
                 Render();
             }
@@ -89,7 +89,7 @@ namespace Minsk
             {
                 Console.CursorVisible = false;
                 var lineCount = 0;
-                var state = (object)null;
+                var state = (object?)null;
 
                 foreach (var line in _submissionDocument)
                 {
@@ -442,7 +442,7 @@ namespace Minsk
             _submissionHistory.Clear();
         }
 
-        protected virtual object RenderLine(IReadOnlyList<string> lines, int lineIndex, object state)
+        protected virtual object? RenderLine(IReadOnlyList<string> lines, int lineIndex, object? state)
         {
             Console.Write(lines[lineIndex]);
             return state;
@@ -580,6 +580,7 @@ namespace Minsk
                     Console.Out.WriteIdentifier(metaCommand.Name);
                     foreach (var pi in metaParams)
                     {
+                        if (pi.Name == null) continue;
                         Console.Out.WritePunctuation(" <");
                         Console.Out.WriteIdentifier(pi.Name);
                         Console.Out.WritePunctuation(">");
